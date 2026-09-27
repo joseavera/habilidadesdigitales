@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temario del curso | Desarrollo de Habilidades Digitales</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  .mascota-flotante {
+    max-width: 100px;
+    float: right;
+    margin: 0 0 1rem 1.5rem;
+  }
+  .overview-table td, .overview-table th { vertical-align: top; }
+  .hours-pill {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--guinda);
+    background: var(--guinda-light);
+    border: 1px solid #D8A8BA;
+    border-radius: 999px;
+    padding: .15rem .7rem;
+    white-space: nowrap;
+  }
+  .unit-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .unit-head {
+    background: var(--guinda);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .unit-head .unit-num {
+    font-family: var(--font-ui);
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: rgba(255,255,255,.7);
+    display: block;
+    margin-bottom: .2rem;
+  }
+  .unit-head h3 {
+    color: var(--white);
+    font-size: 1.35rem;
+    margin-bottom: 0;
+  }
+  .unit-head .unit-hours {
+    font-family: var(--font-ui);
+    font-size: .8rem;
+    color: rgba(255,255,255,.85);
+    text-align: right;
+  }
+  .unit-body {
+    padding: 1.4rem 1.6rem;
+    background: var(--off-white);
+  }
+  .unit-body .subtemas {
+    margin-bottom: 1rem;
+  }
+  .unit-body .subtemas li { font-size: .95rem; }
+  .unit-purpose {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--guinda-rule);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: .8rem 1.1rem;
+    font-size: .95rem;
+    margin-bottom: 1rem;
+  }
+  .unit-product {
+    font-family: var(--font-ui);
+    font-size: .88rem;
+    color: var(--ink-secondary);
+  }
+  .unit-product strong { color: var(--guinda-dark); }
+  .eval-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .eval-bar-row .eval-label { flex: 1; font-size: .95rem; }
+  .eval-bar-row .eval-pct {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    color: var(--guinda);
+    min-width: 46px;
+    text-align: right;
+  }
+  .eval-track {
+    flex: 2;
+    height: 10px;
+    background: var(--surface);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .eval-fill { height: 100%; background: var(--guinda); }
+  .biblio-list { list-style: none; padding: 0; }
+  .biblio-list li {
+    padding: .6rem 0 .6rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .92rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .biblio-list li::before {
+    content: "•";
+    position: absolute;
+    left: .3rem;
+    color: var(--guinda);
+    font-weight: 700;
+  }
+  .biblio-list li:last-child { border-bottom: none; }
+  .biblio-unit-tag {
+    font-family: var(--font-ui);
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--guinda-mid);
+    display: block;
+    margin-top: 1.2rem;
+    margin-bottom: .3rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-wrap"><img src="imagen1.png" alt="Instituto de Educación Digital del Estado de Puebla"></div>
+  <div class="header-text">
+    <span class="inst-name">Instituto de Educación Digital del Estado de Puebla</span>
+    <span class="doc-title">Licenciatura en Sistemas Computacionales · Temario del curso</span>
+  </div>
+</header>
+
+<div class="class-hero">
+  <span class="class-label">Temario del curso</span>
+  <h1>Desarrollo de Habilidades Digitales</h1>
+  <span class="class-subtitle">Desarrollar las habilidades, destrezas y bases teóricas de las Tecnologías de la Información y Comunicación (TIC), a través de la alfabetización digital y el uso de herramientas de seguridad, colaboración y creación de contenido con apoyo de inteligencia artificial, con miras a comprender el impacto de las TIC, resolver problemas técnicos comunes y aplicar eficazmente las competencias digitales en la vida profesional, académica y personal.</span>
+  <div class="meta-row">
+    <div class="meta-item">Programa educativo<span>Lic. en Sistemas Computacionales</span></div>
+    <div class="meta-item">Modalidad<span>Mixta</span></div>
+    <div class="meta-item">Cuatrimestre<span>Primer cuatrimestre</span></div>
+    <div class="meta-item">Créditos<span>4 (64 horas totales)</span></div>
+    <div class="meta-item">Asesor<span>Mtro. José Armando Vera Rodríguez</span></div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+  <img src="imagen2.png" alt="Mixtle, mascota del curso" class="mascota-flotante">
+
+  <section class="section">
+    <h2 class="section-title">Mapa del curso</h2>
+    <p>El curso se organiza en <strong>5 unidades</strong>, con un total de 16 horas conducidas y 48 horas de trabajo independiente (64 horas en total).</p>
+
+    <table class="overview-table">
+      <thead>
+        <tr><th>Unidad</th><th>Tema</th><th>Horas</th><th>Producto de aprendizaje</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Alfabetización e Información</td>
+          <td><span class="hours-pill">3 h + 9 h</span></td>
+          <td>Lista de herramientas digitales esenciales</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Seguridad</td>
+          <td><span class="hours-pill">3 h + 9 h</span></td>
+          <td>Perfil de seguridad digital</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Colaboración y Comunicación en Entornos Digitales</td>
+          <td><span class="hours-pill">3 h + 9 h</span></td>
+          <td>Manual de procedimientos para trabajo en equipo virtual</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Creación de Contenido Digital</td>
+          <td><span class="hours-pill">4 h + 12 h</span></td>
+          <td>Post sobre tecnología (con apoyo de IA)</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Resolución de Problemas</td>
+          <td><span class="hours-pill">3 h + 9 h</span></td>
+          <td>Guía de solución a un problema tecno-común</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="text-muted" style="margin-top:.5rem;">Horas expresadas como: conducidas (con el asesor) + independientes (trabajo autónomo).</p>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Unidades del curso</h2>
+
+    <div class="unit-card">
+      <div class="unit-head">
+        <div><span class="unit-num">Unidad 1</span><h3>Alfabetización e Información</h3></div>
+        <div class="unit-hours">3 h conducidas<br>9 h independientes</div>
+      </div>
+      <div class="unit-body">
+        <ul class="subtemas">
+          <li>1.1 Introducción a las TIC</li>
+          <li>1.2 Hardware y software del PC</li>
+          <li>1.3 Sistemas operativos y su evolución</li>
+          <li>1.4 Herramientas de Office</li>
+          <li>1.5 Navegación y evaluación de información en la web</li>
+        </ul>
+        <div class="unit-purpose">Comprender la importancia de la alfabetización digital, mediante el reconocimiento y uso eficiente de hardware y software, sistemas operativos y herramientas de Office para localizar, organizar, comunicar, crear y construir información.</div>
+        <div class="unit-product">Producto de aprendizaje: <strong>lista de herramientas digitales esenciales</strong> clasificada según su función (hardware, software, sistema operativo y suite de Office).</div>
+      </div>
+    </div>
+
+    <div class="unit-card">
+      <div class="unit-head">
+        <div><span class="unit-num">Unidad 2</span><h3>Seguridad</h3></div>
+        <div class="unit-hours">3 h conducidas<br>9 h independientes</div>
+      </div>
+      <div class="unit-body">
+        <ul class="subtemas">
+          <li>2.1 Identidad y reputación digital</li>
+          <li>2.2 Protección de dispositivos, medidas de seguridad y ciberseguridad</li>
+        </ul>
+        <div class="unit-purpose">Analizar las implicaciones de no contar con medidas de seguridad y ciberseguridad, a través del uso de protocolos para navegar en la web de modo seguro.</div>
+        <div class="unit-product">Producto de aprendizaje: <strong>perfil de seguridad digital</strong> — análisis fotográfico y reflexivo de las configuraciones de privacidad y protección de los dispositivos.</div>
+      </div>
+    </div>
+
+    <div class="unit-card">
+      <div class="unit-head">
+        <div><span class="unit-num">Unidad 3</span><h3>Colaboración y Comunicación en Entornos Digitales</h3></div>
+        <div class="unit-hours">3 h conducidas<br>9 h independientes</div>
+      </div>
+      <div class="unit-body">
+        <ul class="subtemas">
+          <li>3.1 Herramientas de Google</li>
+          <li>3.2 Redes sociales</li>
+        </ul>
+        <div class="unit-purpose">Emplear las herramientas de Google y las Redes Sociales, de acuerdo a su exploración y uso, para aprovecharlas como medios útiles para colaborar y comunicarse.</div>
+        <div class="unit-product">Producto de aprendizaje: <strong>manual de procedimientos</strong> para la colaboración efectiva en línea — guía para trabajar en equipo virtual.</div>
+      </div>
+    </div>
+
+    <div class="unit-card">
+      <div class="unit-head">
+        <div><span class="unit-num">Unidad 4</span><h3>Creación de Contenido Digital</h3></div>
+        <div class="unit-hours">4 h conducidas<br>12 h independientes</div>
+      </div>
+      <div class="unit-body">
+        <ul class="subtemas">
+          <li>4.1 Contenido digital</li>
+          <li>4.2 Creación de contenido utilizando inteligencia artificial</li>
+          <li>4.3 Derechos de autor en entornos digitales</li>
+        </ul>
+        <div class="unit-purpose">Diseñar material digital creativo, a través del uso eficaz de la información de la web, de su selección y clasificación, respetando los derechos de autor, para atender las necesidades de diversos públicos.</div>
+        <div class="unit-product">Producto de aprendizaje: <strong>post sobre tecnología</strong> — pieza de contenido digital creada con apoyo de inteligencia artificial.</div>
+      </div>
+    </div>
+
+    <div class="unit-card">
+      <div class="unit-head">
+        <div><span class="unit-num">Unidad 5</span><h3>Resolución de Problemas</h3></div>
+        <div class="unit-hours">3 h conducidas<br>9 h independientes</div>
+      </div>
+      <div class="unit-body">
+        <ul class="subtemas">
+          <li>5.1 Problemas técnicos comunes al usar dispositivos tecnológicos</li>
+        </ul>
+        <div class="unit-purpose">Resolver problemas técnicos, mediante la determinación de las causas, para brindar soluciones a los problemas comunes relacionados con los dispositivos tecnológicos.</div>
+        <div class="unit-product">Producto de aprendizaje: <strong>guía de solución técnica</strong> — sistematización de la solución a un problema tecno-común.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Evaluación del curso</h2>
+    <p>Se privilegia la evaluación formativa: a lo largo del cuatrimestre se generan cinco productos de aprendizaje (uno por unidad), cuyas calificaciones se promedian para determinar la calificación final.</p>
+
+    <div class="card">
+      <div class="eval-bar-row">
+        <span class="eval-label">Lista de herramientas digitales esenciales (Unidad 1)</span>
+        <div class="eval-track"><div class="eval-fill" style="width:20%;"></div></div>
+        <span class="eval-pct">20 %</span>
+      </div>
+      <div class="eval-bar-row">
+        <span class="eval-label">Perfil de seguridad digital (Unidad 2)</span>
+        <div class="eval-track"><div class="eval-fill" style="width:20%;"></div></div>
+        <span class="eval-pct">20 %</span>
+      </div>
+      <div class="eval-bar-row">
+        <span class="eval-label">Manual de procedimientos de colaboración (Unidad 3)</span>
+        <div class="eval-track"><div class="eval-fill" style="width:20%;"></div></div>
+        <span class="eval-pct">20 %</span>
+      </div>
+      <div class="eval-bar-row">
+        <span class="eval-label">Post sobre tecnología con IA (Unidad 4)</span>
+        <div class="eval-track"><div class="eval-fill" style="width:20%;"></div></div>
+        <span class="eval-pct">20 %</span>
+      </div>
+      <div class="eval-bar-row" style="margin-bottom:0;">
+        <span class="eval-label">Guía de solución técnica (Unidad 5)</span>
+        <div class="eval-track"><div class="eval-fill" style="width:20%;"></div></div>
+        <span class="eval-pct">20 %</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Recursos y plataformas del curso</h2>
+    <div class="grid-2">
+      <ul style="margin-bottom:0;">
+        <li>Plataforma de Gestión de Aprendizaje (LMS): Open edX</li>
+        <li>Videoconferencias: Google Meet para asesorías síncronas</li>
+        <li>Repositorios digitales y biblioteca virtual</li>
+        <li>Pizarras digitales interactivas (Miro, Weje, Sketchboard, Ziteboard)</li>
+      </ul>
+      <ul style="margin-bottom:0;">
+        <li>Herramientas de análisis de datos (Looker Studio, Power BI, Google Sheets)</li>
+        <li>Herramientas digitales de colaboración (Google Docs, Drive, Teams, Padlet)</li>
+        <li>Dispositivos móviles como herramienta pedagógica (BYOD)</li>
+        <li>Inteligencia artificial generativa (ChatGPT, Gemini, Copilot, Canva con IA)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Bibliografía general</h2>
+
+    <span class="biblio-unit-tag">Unidad 1 — Alfabetización e Información</span>
+    <ul class="biblio-list">
+      <li>Aguilera, P. (2020). <em>Ofimática y procesos de la Información</em>. Editex.</li>
+      <li>Caballero, P., Carbajosa, J. M., Gallego, J. C., Gómez, D. y Miranda, J. (2022). <em>Operaciones auxiliares para la configuración y exploración</em>. Editex.</li>
+      <li>George, C. (2020). Alfabetización y alfabetización digital. <em>Transdigital</em>, 1(1), 3-15.</li>
+      <li>Pérez Martínez, J. A. (2019). <em>Procesadores de Texto Ms Word 2019</em>. C-formación.</li>
+      <li>Yescas, L., y Monsalve, L. (2019). <em>Excel 2019 – 365. Curso práctico paso a paso</em>. Alfaomega.</li>
+    </ul>
+
+    <span class="biblio-unit-tag">Unidad 2 — Seguridad</span>
+    <ul class="biblio-list">
+      <li>Alonso, J. (2021). Identidad digital y reputación online. En J. Cerezo (Dir.), <em>Identidad digital y reputación online</em> (pp. 5-8). Evoca Comunicación e Imagen.</li>
+      <li>Leguizamón, M., Morales, A. C., y Díaz, S. (2019). Mecanismos de seguridad en el internet de las cosas. <em>Revista Vínculos</em>, 16(2), 1–17.</li>
+      <li>Secretaría de Infraestructura, Comunicaciones y Transportes (2023). <em>Guía de Ciberseguridad para el uso seguro de redes y dispositivos de telecomunicaciones en apoyo a la educación</em> (pp. 4-20).</li>
+    </ul>
+
+    <span class="biblio-unit-tag">Unidad 3 — Colaboración y Comunicación en Entornos Digitales</span>
+    <ul class="biblio-list">
+      <li>Gozálvez, V. y Cortijo, G. (2023). Desarrollo Humano y Redes Sociales en Sociedades Digitales. <em>Sophia, Colección de Filosofía de la Educación</em>, (34), 41–64.</li>
+      <li>Marín, V. y Cabero, J. (2019). Las redes sociales en educación: desde la innovación a la investigación educativa. <em>RIED. Revista Iberoamericana de Educación a Distancia</em>, 22(2), 25-30.</li>
+      <li>Ruíz, U. (2022). Las herramientas Google para la enseñanza en el siglo XXI. <em>Revista RedCA</em>, 5(13), 78-102.</li>
+    </ul>
+
+    <span class="biblio-unit-tag">Unidad 4 — Creación de Contenido Digital</span>
+    <ul class="biblio-list">
+      <li>Berrones, L. y Salgado, S. (2023). La aplicación de la inteligencia artificial para mejorar la enseñanza y el aprendizaje en el ámbito educativo. <em>Esprint Investigación</em>, 2(1), 52-60.</li>
+      <li>Franganillo, J. (2022). Contenido generado por inteligencia artificial: oportunidades y amenazas. <em>Anuario ThinkEPI</em>, 16.</li>
+      <li>Piña, J. J. (2021). Los derechos de autor en el ámbito digital. Un necesario sistema de equilibrio de libertades en México. <em>Enfoques jurídicos Revista Multidisciplinar del CEDEGS</em>, (4), 40-56.</li>
+    </ul>
+
+    <span class="biblio-unit-tag">Unidad 5 — Resolución de Problemas</span>
+    <ul class="biblio-list">
+      <li>Benitez, C. M. (2023). <em>Mantenimiento preventivo y predictivo de hardware</em>.</li>
+      <li>Red Users. (2016). <em>Servicio técnico avanzado</em>.</li>
+      <li>Rodríguez, D. H., Moreno, D. Y., Orellana, J. M. y Pincay, K. D. (2021). Ventajas y desventajas de las herramientas tecnológicas en las actividades académicas. <em>Revista Científica. Dominio de las Ciencias</em>, 7(5), 182-195.</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <span>Instituto de Educación Digital del Estado de Puebla — Desarrollo de Habilidades Digitales</span>
+  <span><strong>Mtro. José Armando Vera Rodríguez</strong></span>
+</footer>
+
+</body>
+</html>
