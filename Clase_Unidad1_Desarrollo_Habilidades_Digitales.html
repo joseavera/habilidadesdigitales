@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 1 — Alfabetización e Información | Desarrollo de Habilidades Digitales</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  /* ── Estilos complementarios específicos de esta clase ─────── */
+  .mascota-flotante {
+    max-width: 110px;
+    float: right;
+    margin: 0 0 1rem 1.5rem;
+  }
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--guinda-rule);
+  }
+  .timeline li {
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 1.2rem;
+  }
+  .timeline li::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--guinda);
+    border: 3px solid var(--guinda-light);
+  }
+  .timeline .tl-era {
+    font-family: var(--font-ui);
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--guinda);
+    display: block;
+  }
+  .timeline .tl-desc {
+    font-size: .95rem;
+    color: var(--ink);
+  }
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+  .checklist li {
+    display: flex;
+    gap: .75rem;
+    align-items: flex-start;
+    margin-bottom: .7rem;
+    font-size: .97rem;
+  }
+  .checklist .chk {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    background: var(--guinda-light);
+    border: 1.5px solid var(--guinda-rule);
+    color: var(--guinda);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 700;
+    margin-top: .1rem;
+  }
+  .icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+  .mixtle-quote {
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+    background: var(--guinda-light);
+    border: 1px solid #D8A8BA;
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.4rem;
+    margin: 1.5rem 0;
+  }
+  .mixtle-quote img { width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0; box-shadow: var(--shadow-sm); background: var(--white); }
+  .mixtle-quote p { margin-bottom: 0; font-style: italic; color: var(--guinda-dark); }
+  .activity-flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  @media (max-width: 700px) { .activity-flow { grid-template-columns: 1fr; } }
+  .activity-flow .flow-step {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--guinda);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.1rem;
+  }
+  .flow-step .flow-label {
+    font-family: var(--font-ui);
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--guinda);
+    font-weight: 700;
+    display: block;
+    margin-bottom: .4rem;
+  }
+  .biblio-list { list-style: none; padding: 0; }
+  .biblio-list li {
+    padding: .6rem 0 .6rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .92rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .biblio-list li::before {
+    content: "•";
+    position: absolute;
+    left: .3rem;
+    color: var(--guinda);
+    font-weight: 700;
+  }
+  .biblio-list li:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-wrap"><img src="imagen1.png" alt="Instituto de Educación Digital del Estado de Puebla"></div>
+  <div class="header-text">
+    <span class="inst-name">Instituto de Educación Digital del Estado de Puebla</span>
+    <span class="doc-title">Licenciatura en Sistemas Computacionales · Material de clase</span>
+  </div>
+</header>
+
+<div class="class-hero">
+  <span class="class-label">Unidad 1 · Alfabetización e Información</span>
+  <h1>Alfabetización e Información: la base de tu mundo digital</h1>
+  <span class="class-subtitle">Antes de programar, diseñar o automatizar cualquier proceso, es necesario dominar el lenguaje básico de las Tecnologías de la Información y Comunicación (TIC). Esta sesión construye esa base.</span>
+  <div class="meta-row">
+    <div class="meta-item">Programa educativo<span>Lic. en Sistemas Computacionales</span></div>
+    <div class="meta-item">Asignatura<span>Desarrollo de Habilidades Digitales</span></div>
+    <div class="meta-item">Unidad y tema<span>1. Alfabetización e Información</span></div>
+    <div class="meta-item">Fecha<span>Lunes 14 de septiembre de 2026</span></div>
+    <div class="meta-item">Duración<span>3 horas (sesión conducida)</span></div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+  <section class="section">
+    <h2 class="section-title">Competencias a desarrollar</h2>
+    <div class="competency-card">
+      <span class="comp-num">01</span>
+      <span class="comp-text"><strong>Reconocer</strong> los componentes de hardware y software de una computadora y explicar la función de cada uno dentro del procesamiento de información.</span>
+    </div>
+    <div class="competency-card">
+      <span class="comp-num">02</span>
+      <span class="comp-text"><strong>Distinguir</strong> los sistemas operativos más utilizados y describir su evolución tecnológica a lo largo del tiempo.</span>
+    </div>
+    <div class="competency-card">
+      <span class="comp-num">03</span>
+      <span class="comp-text"><strong>Aplicar</strong> las herramientas básicas de la suite de Office para localizar, organizar, crear y comunicar información.</span>
+    </div>
+    <div class="competency-card">
+      <span class="comp-num">04</span>
+      <span class="comp-text"><strong>Evaluar</strong> de forma crítica la información disponible en la web, utilizando criterios de confiabilidad y pertinencia.</span>
+    </div>
+  </section>
+
+  <img src="imagen2.png" alt="Mixtle, mascota del curso" class="mascota-flotante">
+
+  <section class="section">
+    <h2 class="section-title">1.1 Introducción a las TIC</h2>
+    <p>Las <strong>Tecnologías de la Información y Comunicación (TIC)</strong> son el conjunto de herramientas, equipos y sistemas que nos permiten crear, almacenar, procesar y compartir información de forma digital: desde una computadora y un teléfono inteligente, hasta el internet y las plataformas en la nube.</p>
+
+    <div class="concept-box">
+      <span class="concept-title">Analogía</span>
+      <p>Piensa en las TIC como el <strong>sistema nervioso</strong> de una ciudad moderna: así como las neuronas transportan señales entre el cerebro y el cuerpo para que reaccionemos a tiempo, las TIC transportan datos entre personas, empresas y gobiernos para que la información llegue a donde se necesita, en el momento en que se necesita.</p>
+    </div>
+
+    <p>La <strong>alfabetización digital</strong> es, entonces, la capacidad de "hablar ese idioma": saber usar el equipo, el software y la información disponible para resolver problemas cotidianos, académicos y profesionales.</p>
+
+    <div class="mixtle-quote">
+      <img src="imagen1.png" alt="Mixtle">
+      <p>"No necesitas ser programador para dominar las TIC. Necesitas entender qué herramienta usar, cuándo usarla y por qué." — Mixtle</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">1.2 Hardware y software del PC</h2>
+    <p>Toda computadora combina dos tipos de componentes que dependen uno del otro para funcionar.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <span class="card-title">Hardware — el cuerpo</span>
+        <p style="font-size:.95rem; margin-bottom:.5rem;">Son los componentes físicos y tangibles: se pueden tocar.</p>
+        <ul style="margin-bottom:0;">
+          <li>Procesador (CPU) — el "cerebro" que ejecuta instrucciones</li>
+          <li>Memoria RAM — la mesa de trabajo donde se procesa todo temporalmente</li>
+          <li>Disco duro / SSD — el almacén de archivos permanentes</li>
+          <li>Periféricos — teclado, mouse, monitor, impresora</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="card-title">Software — la mente</span>
+        <p style="font-size:.95rem; margin-bottom:.5rem;">Son los programas e instrucciones: no se tocan, se ejecutan.</p>
+        <ul style="margin-bottom:0;">
+          <li>Sistema operativo — organiza y administra todo el equipo</li>
+          <li>Software de aplicación — Word, Excel, un navegador, un videojuego</li>
+          <li>Controladores (drivers) — traducen instrucciones para el hardware</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Analogía:</strong> el hardware es como el cuerpo humano (huesos, músculos, órganos) y el software es como la mente (pensamientos, decisiones, instrucciones). Un cuerpo sin mente no actúa con propósito; una mente sin cuerpo no puede ejecutar nada en el mundo físico. Ambos son indispensables.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">1.3 Sistemas operativos y su evolución</h2>
+    <p>El <strong>sistema operativo (SO)</strong> es el software principal que administra los recursos del equipo (memoria, procesador, archivos, periféricos) y permite que los demás programas funcionen.</p>
+
+    <div class="concept-box">
+      <span class="concept-title">Analogía</span>
+      <p>Un sistema operativo funciona como el <strong>gerente de un edificio de oficinas</strong>: decide qué piso ocupa cada empresa (programa), reparte la electricidad y el agua (memoria y procesador) entre todos los inquilinos, y evita que dos empresas se peleen por el mismo espacio (conflictos de recursos).</p>
+    </div>
+
+    <ul class="timeline">
+      <li><span class="tl-era">Décadas de 1970-1980 · Interfaces de texto</span><span class="tl-desc">Sistemas como MS-DOS y UNIX: el usuario escribía comandos de texto para dar instrucciones.</span></li>
+      <li><span class="tl-era">Década de 1990 · Interfaces gráficas</span><span class="tl-desc">Windows y macOS introducen ventanas, íconos y mouse: la computación se vuelve accesible para el público general.</span></li>
+      <li><span class="tl-era">Década de 2000 · Sistemas libres y estables</span><span class="tl-desc">Distribuciones de Linux ganan terreno en servidores y desarrollo por su estabilidad y código abierto.</span></li>
+      <li><span class="tl-era">2007 en adelante · Movilidad</span><span class="tl-desc">iOS y Android llevan el sistema operativo al bolsillo, priorizando pantallas táctiles y aplicaciones.</span></li>
+      <li><span class="tl-era">Actualidad · Nube e integración</span><span class="tl-desc">Los sistemas operativos se conectan permanentemente a la nube, sincronizando archivos y aplicaciones entre dispositivos.</span></li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">1.4 Herramientas de Office</h2>
+    <p>La suite de Office es como una <strong>caja de herramientas</strong>: cada programa está diseñado para un trabajo específico, igual que un destornillador no sirve para martillar un clavo.</p>
+
+    <table>
+      <thead>
+        <tr><th>Herramienta</th><th>¿Para qué sirve?</th><th>Ejemplo de uso cotidiano</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Word</strong></td><td>Redacción y formato de documentos</td><td>Un reporte, una carta, una tesis</td></tr>
+        <tr><td><strong>Excel</strong></td><td>Cálculo, organización de datos y fórmulas</td><td>Un presupuesto, una lista de calificaciones</td></tr>
+        <tr><td><strong>PowerPoint</strong></td><td>Presentación visual de ideas</td><td>Una exposición o pitch de proyecto</td></tr>
+        <tr><td><strong>Outlook</strong></td><td>Correo electrónico y agenda</td><td>Coordinar una reunión de equipo</td></tr>
+      </tbody>
+    </table>
+
+    <div class="formula-block">
+      <span class="formula-note">Regla práctica para elegir la herramienta correcta:</span>
+      <code class="formula">¿Necesito escribir? → Word &nbsp;|&nbsp; ¿Necesito calcular u organizar datos? → Excel &nbsp;|&nbsp; ¿Necesito mostrar ideas? → PowerPoint</code>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">1.5 Navegación y evaluación de información en la web</h2>
+    <p>No toda la información que aparece en internet es confiable. Antes de usar una fuente para un trabajo académico o una decisión importante, conviene actuar como <strong>detective digital</strong>: revisar las pistas antes de creer al "testigo".</p>
+
+    <div class="example-block">
+      <div class="example-header">Lista de verificación del detective digital</div>
+      <div class="example-body">
+        <ul class="checklist">
+          <li><span class="chk">A</span><span><strong>Autoría:</strong> ¿quién escribió el contenido? ¿tiene experiencia o credenciales sobre el tema?</span></li>
+          <li><span class="chk">F</span><span><strong>Fecha:</strong> ¿la información está actualizada o es obsoleta?</span></li>
+          <li><span class="chk">O</span><span><strong>Objetividad:</strong> ¿el sitio intenta informar o vender/convencer de algo?</span></li>
+          <li><span class="chk">R</span><span><strong>Respaldo:</strong> ¿cita fuentes verificables, datos o referencias?</span></li>
+          <li><span class="chk">P</span><span><strong>Propósito:</strong> ¿el contenido responde exactamente a lo que necesito investigar?</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <p><strong>Nota:</strong> dominios como <span class="text-mono">.edu</span> y <span class="text-mono">.gob</span>, así como los repositorios académicos, suelen ofrecer mayor confiabilidad que blogs personales o redes sociales sin autoría clara — aunque siempre conviene verificar.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Actividad de aprendizaje</h2>
+    <p>Producto de la unidad: <strong>lista de herramientas digitales esenciales</strong>, clasificada según su función (hardware, software, sistema operativo y suite de Office).</p>
+
+    <div class="activity-flow">
+      <div class="flow-step">
+        <span class="flow-label">Inicio</span>
+        Clase magistral interactiva: modelamos juntos una tabla comparativa de hardware y software, partiendo del equipo que cada estudiante usa a diario.
+      </div>
+      <div class="flow-step">
+        <span class="flow-label">Desarrollo</span>
+        Taller práctico en equipos: exploran su sistema operativo, configuran herramientas de Office y practican la evaluación crítica de fuentes en la web.
+      </div>
+      <div class="flow-step">
+        <span class="flow-label">Cierre</span>
+        Asesoría síncrona (Google Meet) para revisar la lista de herramientas digitales esenciales, con retroalimentación grupal sobre su clasificación.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Actividad independiente</span>
+      <p style="margin-bottom:0;">Investigación documental: elabora tu propia lista de herramientas digitales esenciales (mínimo 3 por categoría: hardware, software, sistema operativo y suite de Office), clasificadas según su función. Súbela a la plataforma antes de la próxima sesión.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Conclusión</h2>
+    <p>La alfabetización digital no consiste en memorizar el nombre de cada componente o programa, sino en <strong>entender cómo se relacionan entre sí</strong>: el hardware ejecuta, el software instruye, el sistema operativo organiza, las herramientas de Office producen y la evaluación crítica de la información protege la calidad de todo lo que construimos con ellas. Dominar esta base te permitirá avanzar con confianza hacia los temas de seguridad, colaboración digital, creación de contenido y resolución de problemas técnicos que veremos en las siguientes unidades.</p>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Referencias bibliográficas</h2>
+    <ul class="biblio-list">
+      <li>Aguilera, P. (2020). <em>Ofimática y procesos de la Información</em>. Editex.</li>
+      <li>Caballero, P., Carbajosa, J. M., Gallego, J. C., Gómez, D. y Miranda, J. (2022). <em>Operaciones auxiliares para la configuración y exploración</em>. Editex.</li>
+      <li>George, C. (2020). Alfabetización y alfabetización digital. <em>Transdigital</em>, 1(1), 3-15.</li>
+      <li>Pérez Martínez, J. A. (2019). <em>Procesadores de Texto Ms Word 2019</em>. C-formación.</li>
+      <li>Yescas, L., y Monsalve, L. (2019). <em>Excel 2019 – 365. Curso práctico paso a paso</em>. Alfaomega.</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <span>Instituto de Educación Digital del Estado de Puebla — Desarrollo de Habilidades Digitales</span>
+  <span><strong>Mtro. José Armando Vera Rodríguez</strong></span>
+</footer>
+
+</body>
+</html>
