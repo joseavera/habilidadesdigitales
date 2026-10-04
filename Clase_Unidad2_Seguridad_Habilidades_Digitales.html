@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 2 — Seguridad | Desarrollo de Habilidades Digitales</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  /* ── Estilos complementarios de esta clase ─────────────────── */
+  .mascota-flotante { max-width: 105px; float: right; margin: 0 0 1rem 1.5rem; }
+
+  .mixtle-quote {
+    display: flex; gap: 1.1rem; align-items: flex-start;
+    background: var(--guinda-light); border: 1px solid #D8A8BA;
+    border-radius: var(--radius-lg); padding: 1.1rem 1.4rem; margin: 1.5rem 0;
+  }
+  .mixtle-quote img { width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0; box-shadow: var(--shadow-sm); background: var(--white); }
+  .mixtle-quote p { margin-bottom: 0; font-style: italic; color: var(--guinda-dark); }
+
+  .checklist { list-style: none; padding: 0; margin: 1rem 0; }
+  .checklist li { display: flex; gap: .75rem; align-items: flex-start; margin-bottom: .7rem; font-size: .97rem; }
+  .checklist .chk {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 5px;
+    background: var(--guinda-light); border: 1.5px solid var(--guinda-rule); color: var(--guinda);
+    display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; margin-top: .1rem;
+  }
+
+  .activity-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 700px) { .activity-flow { grid-template-columns: 1fr; } }
+  .activity-flow .flow-step {
+    background: var(--off-white); border: 1px solid var(--border); border-top: 3px solid var(--guinda);
+    border-radius: var(--radius-md); padding: 1rem 1.1rem; font-size: .95rem; line-height: 1.6;
+  }
+  .flow-step .flow-label {
+    font-family: var(--font-ui); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--guinda); font-weight: 700; display: block; margin-bottom: .4rem;
+  }
+
+  .biblio-list { list-style: none; padding: 0; }
+  .biblio-list li { padding: .6rem 0 .6rem 1.6rem; border-bottom: 1px solid var(--border); font-size: .92rem; position: relative; line-height: 1.6; word-break: break-word; }
+  .biblio-list li::before { content: "•"; position: absolute; left: .3rem; color: var(--guinda); font-weight: 700; }
+  .biblio-list li:last-child { border-bottom: none; }
+
+  /* Diagramas SVG */
+  .diagram { background: var(--off-white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; margin: 1.5rem 0; text-align: center; }
+  .diagram svg { max-width: 100%; height: auto; }
+  .diagram figcaption { margin-top: .6rem; }
+
+  /* Tarjetas de huella digital */
+  .footprint-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 600px) { .footprint-grid { grid-template-columns: 1fr; } }
+  .footprint-card { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--off-white); box-shadow: var(--shadow-sm); }
+  .footprint-card .fp-head { padding: .6rem 1.1rem; font-family: var(--font-ui); font-size: .8rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .footprint-card.active .fp-head { background: var(--guinda); color: var(--white); }
+  .footprint-card.passive .fp-head { background: var(--guinda-light); color: var(--guinda); border-bottom: 1px solid #D8A8BA; }
+  .footprint-card .fp-body { padding: 1rem 1.1rem; font-size: .95rem; }
+  .footprint-card ul { margin-bottom: 0; }
+
+  /* Tabla de amenazas con analogía */
+  .threat-table td:first-child { font-weight: 600; white-space: nowrap; }
+  .tag-analogy { font-style: italic; color: var(--guinda-dark); }
+
+  /* Medidor de contraseñas */
+  .pw-box { background: var(--off-white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin: 1.25rem 0; }
+  .pw-row { display: flex; gap: .6rem; flex-wrap: wrap; }
+  .pw-row input {
+    flex: 1; min-width: 200px; font-family: var(--font-mono); font-size: 1rem;
+    padding: .65rem .85rem; border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); background: var(--white); color: var(--ink);
+  }
+  .pw-row input:focus { outline: 2px solid var(--guinda-rule); border-color: var(--guinda); }
+  .btn {
+    font-family: var(--font-ui); font-size: .85rem; font-weight: 600; cursor: pointer;
+    padding: .6rem 1.1rem; border-radius: var(--radius-md); border: 1.5px solid var(--guinda);
+    background: var(--white); color: var(--guinda); transition: background .15s, color .15s;
+  }
+  .btn:hover { background: var(--guinda-light); }
+  .btn.primary { background: var(--guinda); color: var(--white); }
+  .btn.primary:hover { background: var(--guinda-dark); }
+  .pw-meter { height: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin: 1rem 0 .4rem; }
+  .pw-fill { height: 100%; width: 0; background: var(--guinda-rule); transition: width .25s, background .25s; }
+  .pw-label { font-family: var(--font-ui); font-size: .9rem; font-weight: 700; color: var(--guinda); min-height: 1.4em; }
+  .pw-rules { list-style: none; padding: 0; margin: .8rem 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: .3rem .9rem; font-family: var(--font-ui); font-size: .85rem; }
+  @media (max-width: 600px) { .pw-rules { grid-template-columns: 1fr; } }
+  .pw-rules li { margin: 0; color: var(--ink-muted); }
+  .pw-rules li.ok { color: var(--guinda-dark); font-weight: 600; }
+  .pw-rules li::before { content: "○ "; }
+  .pw-rules li.ok::before { content: "● "; color: var(--guinda); }
+
+  /* Juego de phishing */
+  .mail-card { border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--white); margin-bottom: 1.25rem; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .mail-head { background: var(--surface); border-bottom: 1px solid var(--border); padding: .75rem 1.1rem; font-family: var(--font-ui); font-size: .82rem; line-height: 1.6; }
+  .mail-head .m-label { color: var(--ink-muted); display: inline-block; min-width: 64px; }
+  .mail-head .m-from { font-family: var(--font-mono); font-size: .8rem; color: var(--ink); word-break: break-all; }
+  .mail-head .m-subject { font-weight: 700; color: var(--ink); }
+  .mail-body { padding: 1rem 1.1rem; font-size: .95rem; line-height: 1.65; }
+  .mail-body .fake-link { color: #1a56c4; text-decoration: underline; font-family: var(--font-mono); font-size: .85rem; word-break: break-all; cursor: not-allowed; }
+  .mail-actions { padding: .8rem 1.1rem; border-top: 1px solid var(--border); display: flex; gap: .6rem; flex-wrap: wrap; background: var(--off-white); }
+  .mail-feedback { display: none; padding: 1rem 1.1rem; border-top: 3px solid var(--guinda); background: var(--guinda-light); font-size: .93rem; }
+  .mail-feedback.show { display: block; }
+  .mail-feedback .verdict { font-family: var(--font-ui); font-weight: 700; color: var(--guinda-dark); display: block; margin-bottom: .4rem; }
+  .mail-feedback ul { margin: .4rem 0 0; font-size: .92rem; }
+  .score-board { background: var(--guinda); color: var(--white); border-radius: var(--radius-lg); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem; margin-bottom: 1.25rem; font-family: var(--font-ui); }
+  .score-board .score-num { font-size: 1.6rem; font-weight: 700; }
+  .score-board .score-msg { font-size: .9rem; color: rgba(255,255,255,.85); max-width: 460px; }
+
+  .mini-badge { display: inline-block; font-family: var(--font-ui); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--guinda-light); color: var(--guinda); border: 1px solid #D8A8BA; border-radius: 999px; padding: .1rem .65rem; margin-bottom: .6rem; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-wrap"><img src="imagen1.png" alt="Instituto de Educación Digital del Estado de Puebla"></div>
+  <div class="header-text">
+    <span class="inst-name">Instituto de Educación Digital del Estado de Puebla</span>
+    <span class="doc-title">Licenciatura en Sistemas Computacionales · Material de clase</span>
+  </div>
+</header>
+
+<div class="class-hero">
+  <span class="class-label">Unidad 2 · Seguridad</span>
+  <h1>Seguridad digital: cuida lo que eres y lo que tienes en línea</h1>
+  <span class="class-subtitle">Tu identidad, tus archivos y tu dinero también viven en internet. En esta sesión aprenderás a reconocer las amenazas más comunes y a construir protocolos sencillos para navegar con seguridad.</span>
+  <div class="meta-row">
+    <div class="meta-item">Programa educativo<span>Lic. en Sistemas Computacionales</span></div>
+    <div class="meta-item">Asignatura<span>Desarrollo de Habilidades Digitales</span></div>
+    <div class="meta-item">Unidad y tema<span>2. Seguridad</span></div>
+    <div class="meta-item">Fecha<span>Domingo 4 de octubre de 2026</span></div>
+    <div class="meta-item">Duración<span>3 horas (sesión conducida)</span></div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+  <section class="section">
+    <h2 class="section-title">Competencias a desarrollar</h2>
+    <div class="competency-card">
+      <span class="comp-num">01</span>
+      <span class="comp-text"><strong>Analizar</strong> cómo se construye la identidad y la reputación digital, y qué implicaciones tiene lo que publicamos y compartimos.</span>
+    </div>
+    <div class="competency-card">
+      <span class="comp-num">02</span>
+      <span class="comp-text"><strong>Identificar</strong> las amenazas más frecuentes en la red: phishing, suplantación de identidad, malware y contraseñas vulnerables.</span>
+    </div>
+    <div class="competency-card">
+      <span class="comp-num">03</span>
+      <span class="comp-text"><strong>Aplicar</strong> medidas de protección para dispositivos y cuentas: contraseñas robustas, verificación en dos pasos, actualizaciones y copias de seguridad.</span>
+    </div>
+    <div class="competency-card">
+      <span class="comp-num">04</span>
+      <span class="comp-text"><strong>Evaluar</strong> su propio perfil de seguridad y proponer protocolos para navegar en la web de modo seguro.</span>
+    </div>
+  </section>
+
+  <img src="imagen2.png" alt="Mixtle, mascota del curso" class="mascota-flotante">
+
+  <section class="section">
+    <h2 class="section-title">2.1 Identidad y reputación digital</h2>
+    <p>Tu <strong>identidad digital</strong> es el conjunto de datos, publicaciones, fotografías, comentarios y rastros que existen sobre ti en internet. Tu <strong>reputación digital</strong> es la opinión que los demás se forman de ti a partir de todo eso: un posible empleador, un profesor, un cliente o un desconocido.</p>
+
+    <div class="concept-box">
+      <span class="concept-title">Analogía</span>
+      <p>Internet funciona como <strong>cemento fresco</strong>: cada vez que publicas, comentas o te etiquetan, dejas una huella. Al principio parece que se puede borrar fácilmente, pero cuando el cemento se endurece (alguien captura la pantalla, comparte o respalda la publicación), la huella queda para siempre. Por eso conviene <em>pensar antes de pisar</em>.</p>
+    </div>
+
+    <h3>Dos tipos de huella digital</h3>
+    <div class="footprint-grid">
+      <div class="footprint-card active">
+        <div class="fp-head">Huella activa — lo que tú dejas</div>
+        <div class="fp-body">
+          <ul>
+            <li>Publicaciones, fotos y videos en redes sociales</li>
+            <li>Comentarios en foros y videos</li>
+            <li>Formularios que llenas con tus datos</li>
+            <li>Correos y mensajes que envías</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footprint-card passive">
+        <div class="fp-head">Huella pasiva — lo que recopilan de ti</div>
+        <div class="fp-body">
+          <ul>
+            <li>Historial de navegación y búsquedas</li>
+            <li>Ubicación de tu teléfono y dirección IP</li>
+            <li>Cookies y anuncios personalizados</li>
+            <li>Datos que las apps recogen en segundo plano</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 560 300" role="img" aria-label="Iceberg de la identidad digital: lo visible sobre el agua y lo oculto debajo">
+        <rect x="0" y="0" width="560" height="110" fill="#FAFAFA"/>
+        <rect x="0" y="110" width="560" height="190" fill="#F5E8EE"/>
+        <line x1="0" y1="110" x2="560" y2="110" stroke="#C85070" stroke-width="2" stroke-dasharray="6 5"/>
+        <polygon points="280,22 330,110 230,110" fill="#FFFFFF" stroke="#490b58" stroke-width="2"/>
+        <polygon points="230,110 330,110 440,190 380,260 200,265 130,185" fill="#490b58" opacity=".88"/>
+        <line x1="318" y1="82" x2="352" y2="66" stroke="#490b58" stroke-width="1.2"/>
+        <text x="358" y="66" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#490b58">Lo que publicas</text>
+        <text x="358" y="82" font-family="Inter, sans-serif" font-size="10" fill="#5C4850">fotos, comentarios, perfiles</text>
+        <text x="280" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#FFFFFF">Lo que se recopila de ti</text>
+        <text x="280" y="182" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#F5E8EE">historial · ubicación · cookies</text>
+        <text x="280" y="202" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#F5E8EE">datos de apps · metadatos</text>
+        <text x="20" y="130" font-family="Inter, sans-serif" font-size="10" fill="#5C4850">Superficie (visible)</text>
+        <text x="20" y="288" font-family="Inter, sans-serif" font-size="10" fill="#5C4850">Debajo del agua (invisible para ti)</text>
+      </svg>
+      <figcaption>Como en un iceberg, la mayor parte de tu identidad digital no la ves a simple vista.</figcaption>
+    </figure>
+
+    <div class="callout">
+      <p><strong>Para reflexionar:</strong> si hoy escribieran tu nombre en un buscador, ¿qué encontraría un posible empleador? ¿Esa imagen te representa como profesional?</p>
+    </div>
+
+    <div class="example-block">
+      <div class="example-header">Hábitos para cuidar tu reputación digital</div>
+      <div class="example-body">
+        <ul class="checklist">
+          <li><span class="chk">1</span><span><strong>Piensa antes de publicar:</strong> ¿lo diría frente a mi familia, mi jefe y mis profesores?</span></li>
+          <li><span class="chk">2</span><span><strong>Configura la privacidad:</strong> decide quién puede ver tus fotos, tu lista de amigos y tus publicaciones.</span></li>
+          <li><span class="chk">3</span><span><strong>Búscate a ti mismo:</strong> revisa periódicamente qué aparece sobre ti y solicita retirar lo que no corresponda.</span></li>
+          <li><span class="chk">4</span><span><strong>Separa lo personal de lo profesional:</strong> usa perfiles distintos cuando sea posible.</span></li>
+          <li><span class="chk">5</span><span><strong>Cuida los datos de otros:</strong> no etiquetes ni compartas fotos de alguien sin su permiso.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">2.2 Protección de dispositivos, medidas de seguridad y ciberseguridad</h2>
+    <p>La <strong>ciberseguridad</strong> es el conjunto de prácticas, herramientas y protocolos que protegen dispositivos, redes y datos frente a accesos no autorizados, robo o daño.</p>
+
+    <div class="concept-box">
+      <span class="concept-title">Analogía</span>
+      <p>Proteger tu vida digital es como proteger tu casa: no basta con una sola cerradura. Una casa segura tiene <strong>puerta con llave, alarma, cámaras y hasta un seguro por si algo sucede</strong>. En ciberseguridad se llama <em>defensa en capas</em>: si una capa falla, la siguiente te sigue protegiendo.</p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 520 350" role="img" aria-label="Defensa en capas: tú en el centro, rodeado por contraseñas y verificación, dispositivo, red y copias de seguridad">
+        <circle cx="260" cy="165" r="158" fill="#F5E8EE" stroke="#C85070" stroke-width="1.5"/>
+        <circle cx="260" cy="165" r="122" fill="#EBD0DB" stroke="#C85070" stroke-width="1.5"/>
+        <circle cx="260" cy="165" r="86" fill="#C85070" opacity=".75"/>
+        <circle cx="260" cy="165" r="52" fill="#490b58"/>
+        <text x="260" y="162" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">Tú y tus</text>
+        <text x="260" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF">datos</text>
+        <text x="260" y="96" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Cuentas</text>
+        <text x="260" y="109" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#FFFFFF">contraseña + 2.º paso</text>
+        <text x="260" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#490b58">Dispositivo</text>
+        <text x="260" y="71" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#490b58">antivirus · actualizaciones</text>
+        <text x="260" y="24" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#5C4850">Red</text>
+        <text x="260" y="37" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#5C4850">firewall · Wi-Fi seguro · VPN</text>
+        <text x="260" y="343" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5C4850">Anillo exterior: copias de seguridad (tu “seguro”)</text>
+      </svg>
+      <figcaption>Defensa en capas: ninguna medida es perfecta por sí sola, pero juntas reducen mucho el riesgo.</figcaption>
+    </figure>
+
+    <h3>Amenazas más comunes y su analogía</h3>
+    <table class="threat-table">
+      <thead>
+        <tr><th>Amenaza</th><th>¿Qué es?</th><th>Se parece a…</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Phishing</td><td>Mensajes falsos que imitan a un banco, tienda o institución para que entregues tus datos.</td><td class="tag-analogy">Un pescador que lanza carnada: tú decides si muerdes el anzuelo.</td></tr>
+        <tr><td>Suplantación de identidad</td><td>Alguien se hace pasar por ti o por una persona de confianza para pedir dinero o información.</td><td class="tag-analogy">Un impostor con uniforme robado que toca tu puerta.</td></tr>
+        <tr><td>Malware</td><td>Programas maliciosos (virus, troyanos, spyware) que dañan o espían tu equipo.</td><td class="tag-analogy">El caballo de Troya: parece un regalo, pero trae soldados dentro.</td></tr>
+        <tr><td>Ransomware</td><td>Cifra tus archivos y exige un pago para devolvértelos.</td><td class="tag-analogy">Un secuestro: tus archivos son los rehenes.</td></tr>
+        <tr><td>Contraseñas débiles</td><td>Claves cortas, comunes o repetidas en varios sitios.</td><td class="tag-analogy">Dejar la llave bajo el tapete de la entrada.</td></tr>
+        <tr><td>Redes Wi-Fi públicas</td><td>Conexiones abiertas donde otros pueden interceptar tu tráfico.</td><td class="tag-analogy">Hablar de tus secretos en voz alta en una plaza llena de gente.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Práctica 1: Taller de análisis de casos de phishing</h2>
+    <span class="mini-badge">Actividad de inicio</span>
+    <p>Lee cada mensaje con calma y decide si es <strong>legítimo</strong> o <strong>phishing</strong>. Al responder verás las señales de alerta que debías detectar. Los nombres y direcciones son ficticios.</p>
+
+    <div class="score-board">
+      <div><span class="score-num" id="scoreNum">0 / 5</span><br><span style="font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.7);">Aciertos</span></div>
+      <div class="score-msg" id="scoreMsg">Responde los cinco casos para conocer tu resultado.</div>
+      <button class="btn" id="resetPhish" type="button" style="background:var(--white);">Reiniciar</button>
+    </div>
+
+    <div id="mailList"></div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Práctica 2: ¿Qué tan fuerte es una contraseña?</h2>
+    <span class="mini-badge">Actividad de desarrollo</span>
+    <p>Escribe contraseñas de <strong>ejemplo</strong> para ver cómo cambia su fortaleza. El análisis ocurre únicamente en tu navegador y no se envía a ningún sitio; aun así, <strong>nunca escribas aquí una contraseña que uses de verdad</strong>.</p>
+
+    <div class="pw-box">
+      <div class="pw-row">
+        <input type="password" id="pwInput" placeholder="Prueba, por ejemplo: Mi-gato-come-3-pescados!" autocomplete="off" aria-label="Contraseña de ejemplo">
+        <button class="btn" type="button" id="pwToggle">Mostrar</button>
+      </div>
+      <div class="pw-meter" aria-hidden="true"><div class="pw-fill" id="pwFill"></div></div>
+      <div class="pw-label" id="pwLabel" aria-live="polite">Escribe algo para comenzar</div>
+      <ul class="pw-rules" id="pwRules">
+        <li data-rule="len">12 o más caracteres</li>
+        <li data-rule="low">Letras minúsculas</li>
+        <li data-rule="up">Letras mayúsculas</li>
+        <li data-rule="num">Números</li>
+        <li data-rule="sym">Símbolos (!, #, -, _)</li>
+        <li data-rule="common">No es una clave común</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <p><strong>Truco de la frase de paso:</strong> en lugar de una clave corta y rara como <span class="text-mono">Xk9#</span>, usa una frase larga que solo tú entiendas, por ejemplo <span class="text-mono">Mi-gato-come-3-pescados!</span>. Es más fácil de recordar y mucho más difícil de adivinar. Y recuerda: <strong>una contraseña distinta para cada servicio</strong>, guardada en un administrador de contraseñas.</p>
+    </div>
+
+    <h3>Otras medidas básicas de protección</h3>
+    <div class="grid-2">
+      <div class="card">
+        <span class="card-title">Verificación en dos pasos (2FA)</span>
+        <p class="text-sm" style="margin-bottom:0;">Es como una puerta con <em>llave y huella</em>: aunque alguien robe tu contraseña, necesita además el código de tu teléfono o app autenticadora.</p>
+      </div>
+      <div class="card">
+        <span class="card-title">Actualizaciones al día</span>
+        <p class="text-sm" style="margin-bottom:0;">Cada actualización es como <em>reparar una cerradura defectuosa</em> que los ladrones ya conocen. Pospongas lo que pospongas, no pospongas las de seguridad.</p>
+      </div>
+      <div class="card">
+        <span class="card-title">Antivirus y firewall</span>
+        <p class="text-sm" style="margin-bottom:0;">El firewall es el <em>portero</em> que revisa quién entra y sale de tu red; el antivirus es el <em>guardia</em> que revisa lo que ya está dentro.</p>
+      </div>
+      <div class="card">
+        <span class="card-title">Copias de seguridad: regla 3-2-1</span>
+        <p class="text-sm" style="margin-bottom:0;"><strong>3</strong> copias de tus archivos, en <strong>2</strong> tipos de medio distintos (por ejemplo disco externo y nube), con <strong>1</strong> copia fuera de tu casa u oficina.</p>
+      </div>
+    </div>
+
+    <div class="mixtle-quote">
+      <img src="imagen1.png" alt="Mixtle">
+      <p>"La seguridad no es un producto que se instala una vez, es un hábito que se practica todos los días." — Mixtle</p>
+    </div>
+
+    <div class="example-block">
+      <div class="example-header">Antes de dar clic: lista de verificación rápida</div>
+      <div class="example-body">
+        <ul class="checklist">
+          <li><span class="chk">R</span><span><strong>Remitente:</strong> ¿la dirección de correo coincide exactamente con la de la organización real?</span></li>
+          <li><span class="chk">U</span><span><strong>Urgencia:</strong> ¿te presionan con plazos o amenazas para que actúes sin pensar?</span></li>
+          <li><span class="chk">E</span><span><strong>Enlace:</strong> pasa el cursor sin hacer clic; ¿el destino coincide con lo que dice el texto? ¿empieza con <span class="text-mono">https://</span>?</span></li>
+          <li><span class="chk">D</span><span><strong>Datos:</strong> ¿te piden contraseñas, códigos o datos bancarios por mensaje? Una institución seria no lo hace.</span></li>
+          <li><span class="chk">A</span><span><strong>Adjuntos:</strong> ¿esperabas ese archivo? Ante la duda, no lo abras.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Actividad de aprendizaje</h2>
+    <p>Producto de la unidad: <strong>mi perfil de seguridad digital</strong>, un análisis fotográfico y reflexivo de las configuraciones de privacidad y protección de tus dispositivos y cuentas.</p>
+
+    <div class="activity-flow">
+      <div class="flow-step">
+        <span class="flow-label">Inicio</span>
+        Taller de análisis de casos reales de phishing y suplantación de identidad, que detona la reflexión sobre los riesgos de la identidad y la reputación digital.
+      </div>
+      <div class="flow-step">
+        <span class="flow-label">Desarrollo</span>
+        Aprendizaje basado en casos: por equipos identifican vulnerabilidades en escenarios simulados y proponen protocolos de protección de dispositivos y ciberseguridad.
+      </div>
+      <div class="flow-step">
+        <span class="flow-label">Cierre</span>
+        Foro de discusión síncrono para compartir los hallazgos de cada perfil de seguridad digital y consensuar buenas prácticas de navegación segura.
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Actividad independiente — Mi perfil de seguridad digital</span>
+      <p>Toma capturas de pantalla (sin mostrar contraseñas ni códigos) de estas configuraciones y acompáñalas de una breve reflexión:</p>
+      <ul style="margin-bottom:.75rem;">
+        <li>Configuración de privacidad de tu red social principal (quién ve tus publicaciones y tu lista de amigos).</li>
+        <li>Verificación en dos pasos activada (o pendiente) en tu correo y tus redes.</li>
+        <li>Permisos de las apps de tu teléfono (ubicación, cámara, micrófono, contactos).</li>
+        <li>Estado de actualizaciones del sistema operativo y del antivirus.</li>
+        <li>Resultado de buscar tu nombre en un buscador: ¿qué huella encontraste?</li>
+      </ul>
+      <p style="margin-bottom:0;">Cierra con un párrafo: <em>¿qué riesgo detectaste en tu perfil y qué tres acciones tomarás para reducirlo?</em> Súbelo a la plataforma antes de la siguiente sesión. Representa el <strong>20 %</strong> de la calificación del curso.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Conclusión</h2>
+    <p>La seguridad digital no depende de una sola herramienta ni de ser experto en informática: depende de <strong>hábitos conscientes</strong>. Cuidar tu identidad y reputación evita que una publicación de hoy se convierta en un problema mañana; conocer las amenazas te permite detectarlas antes de caer; y aplicar protección en capas (contraseñas robustas, verificación en dos pasos, actualizaciones, antivirus y copias de seguridad) hace que, aunque una barrera falle, tu información siga a salvo. Con esta base podrás colaborar y comunicarte en entornos digitales, tema de la siguiente unidad, con mayor confianza y responsabilidad.</p>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Referencias bibliográficas</h2>
+    <ul class="biblio-list">
+      <li>Alonso, J. (2021). Identidad digital y reputación online. En J. Cerezo (Dir.), <em>Identidad digital y reputación online</em> (pp. 5-8). Evoca Comunicación e Imagen. <a href="https://repositorio.upn.edu.pe/bitstream/handle/11537/32272/cuadernos5.pdf?sequence=1&amp;isAllowed=y" target="_blank" rel="noopener">https://repositorio.upn.edu.pe/bitstream/handle/11537/32272/cuadernos5.pdf?sequence=1&amp;isAllowed=y</a></li>
+      <li>Leguizamón, M., Morales, A. C., y Díaz, S. (2019). Mecanismos de seguridad en el internet de las cosas. <em>Revista Vínculos</em>, 16(2), 1–17. <a href="https://revistas.udistrital.edu.co/index.php/vinculos/article/view/15758/15392" target="_blank" rel="noopener">https://revistas.udistrital.edu.co/index.php/vinculos/article/view/15758/15392</a></li>
+      <li>Secretaría de Infraestructura, Comunicaciones y Transportes (2023). <em>Guía de Ciberseguridad para el uso seguro de redes y dispositivos de telecomunicaciones en apoyo a la educación</em> (pp. 4-20).</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <span>Instituto de Educación Digital del Estado de Puebla — Desarrollo de Habilidades Digitales</span>
+  <span><strong>Mtro. José Armando Vera Rodríguez</strong></span>
+</footer>
+
+<script>
+(function () {
+  /* ── Juego de phishing ─────────────────────────────────── */
+  var casos = [
+    {
+      from: "seguridad@banco-ejemplo-verifica.com",
+      subject: "¡URGENTE! Tu cuenta será bloqueada en 24 horas",
+      body: "Estimado cliente:<br>Detectamos actividad sospechosa. Para evitar el bloqueo de su cuenta debe confirmar sus datos hoy mismo en el siguiente enlace:<br><span class='fake-link'>http://bit.ly/verifica-tu-cuenta-ahora</span>",
+      phishing: true,
+      senales: [
+        "El dominio del remitente no es el oficial del banco (imita su nombre).",
+        "Genera urgencia y amenaza con bloquear la cuenta.",
+        "Usa un enlace acortado que oculta el destino real y no es https.",
+        "Saludo genérico (“Estimado cliente”) en lugar de tu nombre."
+      ]
+    },
+    {
+      from: "pedidos@tienda-ejemplo.com.mx",
+      subject: "Tu pedido #48213 ya va en camino",
+      body: "Hola, Ana:<br>Tu pedido que realizaste ayer fue enviado y llegará entre el martes y el jueves. Puedes revisar el seguimiento entrando directamente a tu cuenta desde la aplicación de la tienda.<br>No necesitas responder este mensaje.",
+      phishing: false,
+      senales: [
+        "El mensaje corresponde a una compra que tú realizaste.",
+        "El dominio del remitente es coherente con la tienda.",
+        "No pide contraseñas ni datos bancarios y te invita a entrar por la app, no por un enlace sospechoso."
+      ]
+    },
+    {
+      from: "premios.felicidades2026@correo-gratis-mail.net",
+      subject: "¡Felicidades! Ganaste un teléfono de última generación",
+      body: "Fuiste seleccionado entre miles de usuarios. Para recibir tu premio solo paga el envío de $49 pesos ingresando los datos de tu tarjeta aquí:<br><span class='fake-link'>http://premio-gratis-reclama.xyz/envio</span>",
+      phishing: true,
+      senales: [
+        "Premio inesperado de un concurso en el que nunca participaste.",
+        "Pide datos de tarjeta para un supuesto “pago de envío”.",
+        "Dominio de remitente y de enlace extraños (.net, .xyz).",
+        "Si suena demasiado bueno para ser verdad, probablemente lo es."
+      ]
+    },
+    {
+      from: "WhatsApp · número desconocido (+52 ••• ••• 4821)",
+      subject: "Mensaje de “tu jefe”",
+      body: "“Hola, soy el director, cambié de número. Necesito un favor urgente y confidencial: compra 5 tarjetas de regalo de $500 y mándame las fotos de los códigos. No le digas a nadie, luego te lo reembolso.”",
+      phishing: true,
+      senales: [
+        "Suplantación de identidad: alguien finge ser una autoridad con un número nuevo.",
+        "Pide secrecía y urgencia, típicas de la ingeniería social.",
+        "Solicita dinero o códigos por un canal informal.",
+        "Lo correcto es verificar llamando al número real de la persona."
+      ]
+    },
+    {
+      from: "no-responder@servicio-ejemplo.com",
+      subject: "Tu código de verificación es 482913",
+      body: "Usa este código para completar tu inicio de sesión. Caduca en 10 minutos. Si tú no lo solicitaste, ignora este mensaje y cambia tu contraseña. <strong>Nunca compartas este código con nadie.</strong>",
+      phishing: false,
+      legitCond: true,
+      senales: [
+        "Es legítimo solo si tú acabas de intentar iniciar sesión en ese servicio.",
+        "No incluye enlaces ni pide que respondas con datos.",
+        "Recuerda: nadie del servicio te llamará ni te escribirá para pedirte ese código."
+      ]
+    }
+  ];
+
+  var mailList = document.getElementById("mailList");
+  var scoreNum = document.getElementById("scoreNum");
+  var scoreMsg = document.getElementById("scoreMsg");
+  var respondidos = 0, aciertos = 0;
+
+  function render() {
+    mailList.innerHTML = "";
+    respondidos = 0; aciertos = 0;
+    actualizarMarcador();
+    casos.forEach(function (c, i) {
+      var card = document.createElement("div");
+      card.className = "mail-card";
+      card.innerHTML =
+        "<div class='mail-head'>" +
+          "<div><span class='m-label'>Caso " + (i + 1) + "</span></div>" +
+          "<div><span class='m-label'>De:</span><span class='m-from'>" + c.from + "</span></div>" +
+          "<div><span class='m-label'>Asunto:</span><span class='m-subject'>" + c.subject + "</span></div>" +
+        "</div>" +
+        "<div class='mail-body'>" + c.body + "</div>" +
+        "<div class='mail-actions'>" +
+          "<button class='btn' type='button' data-resp='legit'>Es legítimo</button>" +
+          "<button class='btn primary' type='button' data-resp='phishing'>Es phishing</button>" +
+        "</div>" +
+        "<div class='mail-feedback' aria-live='polite'></div>";
+      mailList.appendChild(card);
+
+      var botones = card.querySelectorAll("button");
+      var fb = card.querySelector(".mail-feedback");
+      botones.forEach(function (b) {
+        b.addEventListener("click", function () {
+          var dijoPhishing = b.getAttribute("data-resp") === "phishing";
+          var acerto = (dijoPhishing === c.phishing);
+          botones.forEach(function (x) { x.disabled = true; x.style.opacity = ".55"; x.style.cursor = "default"; });
+          respondidos++;
+          if (acerto) aciertos++;
+          var veredicto = c.phishing ? "Era phishing." : (c.legitCond ? "Es legítimo (si tú lo solicitaste)." : "Era un mensaje legítimo.");
+          var items = c.senales.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+          fb.innerHTML = "<span class='verdict'>" + (acerto ? "Correcto. " : "Casi. ") + veredicto + "</span>" +
+                         (c.phishing ? "Señales de alerta:" : "Por qué es confiable:") + "<ul>" + items + "</ul>";
+          fb.classList.add("show");
+          actualizarMarcador();
+        });
+      });
+    });
+  }
+
+  function actualizarMarcador() {
+    scoreNum.textContent = aciertos + " / " + casos.length;
+    if (respondidos < casos.length) {
+      scoreMsg.textContent = respondidos === 0
+        ? "Responde los cinco casos para conocer tu resultado."
+        : "Llevas " + respondidos + " de " + casos.length + " casos respondidos.";
+    } else if (aciertos === casos.length) {
+      scoreMsg.textContent = "Excelente: detectaste todos los casos. Ahora comparte con tu equipo qué señales te ayudaron más.";
+    } else if (aciertos >= 3) {
+      scoreMsg.textContent = "Buen trabajo. Repasa las señales de los casos que fallaste; los atacantes cuentan con que te confíes.";
+    } else {
+      scoreMsg.textContent = "Es normal: los atacantes diseñan estos mensajes para engañar. Revisa las señales y vuelve a intentarlo.";
+    }
+  }
+
+  document.getElementById("resetPhish").addEventListener("click", render);
+  render();
+
+  /* ── Medidor de contraseñas ────────────────────────────── */
+  var comunes = ["123456", "12345678", "123456789", "password", "contraseña", "contrasena", "qwerty", "admin", "abc123", "111111", "iloveyou", "mexico", "123123", "letmein", "bienvenido"];
+  var pwInput = document.getElementById("pwInput");
+  var pwFill = document.getElementById("pwFill");
+  var pwLabel = document.getElementById("pwLabel");
+  var pwRules = document.getElementById("pwRules");
+  var pwToggle = document.getElementById("pwToggle");
+
+  pwToggle.addEventListener("click", function () {
+    var oculto = pwInput.type === "password";
+    pwInput.type = oculto ? "text" : "password";
+    pwToggle.textContent = oculto ? "Ocultar" : "Mostrar";
+  });
+
+  function evaluar() {
+    var v = pwInput.value;
+    var reglas = {
+      len: v.length >= 12,
+      low: /[a-záéíóúñ]/.test(v),
+      up: /[A-ZÁÉÍÓÚÑ]/.test(v),
+      num: /[0-9]/.test(v),
+      sym: /[^A-Za-z0-9áéíóúñÁÉÍÓÚÑ]/.test(v),
+      common: v.length > 0 && !comunes.some(function (c) { return v.toLowerCase().indexOf(c) !== -1; })
+    };
+    Object.keys(reglas).forEach(function (k) {
+      var li = pwRules.querySelector("[data-rule='" + k + "']");
+      if (reglas[k]) li.classList.add("ok"); else li.classList.remove("ok");
+    });
+
+    if (v.length === 0) {
+      pwFill.style.width = "0"; pwLabel.textContent = "Escribe algo para comenzar"; return;
+    }
+    var puntos = 0;
+    if (v.length >= 8) puntos++;
+    if (v.length >= 12) puntos++;
+    if (v.length >= 16) puntos++;
+    if (reglas.low && reglas.up) puntos++;
+    if (reglas.num) puntos++;
+    if (reglas.sym) puntos++;
+    if (!reglas.common) puntos = Math.min(puntos, 1);
+    if (/(.)\1{2,}/.test(v)) puntos = Math.max(0, puntos - 1);
+
+    var niveles = [
+      { t: "Muy débil", w: "12%", c: "#C85070" },
+      { t: "Muy débil", w: "12%", c: "#C85070" },
+      { t: "Débil", w: "30%", c: "#B03A5E" },
+      { t: "Aceptable", w: "52%", c: "#8E2A55" },
+      { t: "Buena", w: "72%", c: "#691f35" },
+      { t: "Fuerte", w: "88%", c: "#520a52" },
+      { t: "Muy fuerte", w: "100%", c: "#490b58" }
+    ];
+    var n = niveles[Math.max(0, Math.min(puntos, niveles.length - 1))];
+    pwFill.style.width = n.w; pwFill.style.background = n.c;
+    pwLabel.textContent = "Nivel: " + n.t + (reglas.common ? "" : " (contiene una clave muy común)");
+  }
+  pwInput.addEventListener("input", evaluar);
+})();
+</script>
+
+</body>
+</html>
