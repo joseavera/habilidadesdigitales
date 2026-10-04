@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación Unidades 1 y 2 | Desarrollo de Habilidades Digitales</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  /* ── Estilos complementarios de la evaluación ──────────────── */
+  body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  input[type="text"] { -webkit-user-select: text; user-select: text; }
+
+  #wm {
+    position: fixed; inset: 0; pointer-events: none; z-index: 40;
+    background-repeat: repeat; display: none;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  .screen { display: none; }
+  .screen.on { display: block; }
+
+  .start-card { max-width: 640px; margin: 0 auto 3rem; }
+  .info-list { list-style: none; padding: 0; margin: .5rem 0 0; }
+  .info-list li { display: flex; gap: .75rem; margin-bottom: .6rem; font-size: .97rem; line-height: 1.6; }
+  .info-list .dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--guinda); margin-top: .65rem; }
+
+  .field { margin-top: 1.4rem; }
+  .field label { display: block; font-family: var(--font-ui); font-size: .8rem; font-weight: 600; color: var(--guinda); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .4rem; }
+  .field input {
+    width: 100%; font-family: var(--font-ui); font-size: 1rem; padding: .75rem .9rem;
+    border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); background: var(--white); color: var(--ink);
+  }
+  .field input:focus { outline: 2px solid var(--guinda-rule); border-color: var(--guinda); }
+  .field .hint { font-family: var(--font-ui); font-size: .78rem; color: var(--ink-muted); margin-top: .35rem; }
+  .field .err { font-family: var(--font-ui); font-size: .82rem; color: #A3173F; margin-top: .4rem; display: none; }
+
+  .btn {
+    font-family: var(--font-ui); font-size: .9rem; font-weight: 600; cursor: pointer;
+    padding: .7rem 1.4rem; border-radius: var(--radius-md); border: 1.5px solid var(--guinda);
+    background: var(--white); color: var(--guinda); transition: background .15s, color .15s;
+  }
+  .btn:hover { background: var(--guinda-light); }
+  .btn.primary { background: var(--guinda); color: var(--white); }
+  .btn.primary:hover { background: var(--guinda-dark); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* Barra superior de la evaluación */
+  .exam-bar {
+    position: sticky; top: 0; z-index: 30; background: var(--white);
+    border-bottom: 2px solid var(--guinda); box-shadow: var(--shadow-md);
+    padding: .7rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    font-family: var(--font-ui);
+  }
+  .exam-bar .who { font-size: .85rem; color: var(--ink-secondary); }
+  .exam-bar .who strong { color: var(--guinda); }
+  .exam-bar .prog { font-size: .82rem; color: var(--ink-secondary); }
+  .exam-bar .timer { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 700; color: var(--guinda); background: var(--guinda-light); border: 1px solid #D8A8BA; border-radius: var(--radius-md); padding: .25rem .8rem; }
+  .exam-bar .timer.low { background: var(--guinda); color: var(--white); }
+
+  .q-card { background: var(--white); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); margin-bottom: 1.75rem; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .q-head { background: var(--guinda); color: var(--white); padding: .65rem 1.4rem; font-family: var(--font-ui); font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+  .q-head .q-tema { font-weight: 500; text-transform: none; letter-spacing: 0; color: rgba(255,255,255,.8); }
+  .q-body { padding: 1.3rem 1.5rem 1.5rem; }
+  .q-context { font-size: .98rem; line-height: 1.7; margin-bottom: .8rem; }
+  .q-items { background: var(--surface); border-left: 3px solid var(--guinda-rule); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: .8rem 1.1rem .8rem 2.2rem; margin: 0 0 .9rem; font-size: .95rem; }
+  .q-items li { margin-bottom: .4rem; }
+  .q-quote { background: #FFF8FA; border: 1px dashed var(--guinda-rule); border-radius: var(--radius-md); padding: .9rem 1.1rem; margin: 0 0 .9rem; font-style: italic; font-size: .95rem; }
+  .q-ask { font-family: var(--font-ui); font-weight: 700; font-size: .98rem; color: var(--ink); margin: 1rem 0 .3rem; line-height: 1.5; }
+  .q-hint { font-family: var(--font-ui); font-size: .78rem; color: var(--guinda-mid); font-weight: 600; margin-bottom: .8rem; letter-spacing: .03em; }
+  .opt { display: flex; gap: .85rem; align-items: flex-start; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: .8rem 1rem; margin-bottom: .6rem; cursor: pointer; background: var(--off-white); transition: border-color .12s, background .12s; font-size: .96rem; line-height: 1.55; }
+  .opt:hover { border-color: var(--guinda-rule); background: var(--white); }
+  .opt.sel { border-color: var(--guinda); background: var(--guinda-light); }
+  .opt.dis { opacity: .5; cursor: not-allowed; }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt .letter { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--guinda); color: var(--guinda); font-family: var(--font-ui); font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .opt.multi .letter { border-radius: 6px; }
+  .opt.sel .letter { background: var(--guinda); color: var(--white); }
+
+  .submit-row { text-align: center; margin: 2rem 0 1rem; }
+
+  /* Chip de infracciones */
+  #chipInf { position: fixed; right: 1rem; bottom: 1rem; z-index: 60; background: var(--guinda); color: var(--white); font-family: var(--font-ui); font-size: .8rem; font-weight: 600; padding: .5rem .95rem; border-radius: 999px; box-shadow: var(--shadow-md); display: none; }
+
+  /* Modal propio (no usa alert para no interrumpir la ventana) */
+  #modalBg { position: fixed; inset: 0; background: rgba(26,18,21,.55); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
+  #modalBg.on { display: flex; }
+  .modal { background: var(--white); border-radius: var(--radius-lg); border-top: 5px solid var(--guinda); max-width: 460px; width: 100%; padding: 1.5rem 1.7rem; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  .modal h3 { color: var(--guinda); margin-bottom: .6rem; }
+  .modal p { font-size: .97rem; }
+  .modal .m-actions { display: flex; gap: .7rem; justify-content: flex-end; margin-top: 1.2rem; flex-wrap: wrap; }
+
+  /* Resultados */
+  .result-card { background: var(--white); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; }
+  .result-top { background: var(--guinda); color: var(--white); padding: 1.6rem 1.8rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+  .result-top .r-name { font-family: var(--font-display); font-size: 1.9rem; line-height: 1.15; }
+  .result-top .r-sub { font-family: var(--font-ui); font-size: .82rem; color: rgba(255,255,255,.75); margin-top: .3rem; }
+  .result-top .r-score { text-align: center; background: var(--white); color: var(--guinda); border-radius: var(--radius-lg); padding: .7rem 1.6rem; }
+  .result-top .r-score .big { font-family: var(--font-display); font-size: 3rem; font-weight: 700; line-height: 1; }
+  .result-top .r-score .small { font-family: var(--font-ui); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; }
+  .result-body { padding: 1.4rem 1.8rem; }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .9rem; margin-bottom: 1.4rem; }
+  .stat { background: var(--off-white); border: 1px solid var(--border); border-radius: var(--radius-md); padding: .8rem 1rem; }
+  .stat .s-label { font-family: var(--font-ui); font-size: .7rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-muted); display: block; }
+  .stat .s-val { font-family: var(--font-ui); font-size: 1.25rem; font-weight: 700; color: var(--guinda); }
+  .review-list { list-style: none; padding: 0; margin: 0; }
+  .review-list li { display: flex; align-items: flex-start; gap: .8rem; padding: .65rem 0; border-bottom: 1px solid var(--border); font-size: .95rem; }
+  .review-list li:last-child { border-bottom: none; }
+  .review-list .mark { flex-shrink: 0; font-family: var(--font-ui); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .15rem .7rem; border-radius: 999px; margin-top: .15rem; }
+  .review-list .mark.ok { background: var(--guinda); color: var(--white); }
+  .review-list .mark.no { background: var(--white); color: var(--guinda); border: 1.5px solid var(--guinda); }
+  .review-list .why { display: block; font-size: .88rem; color: var(--ink-secondary); margin-top: .25rem; }
+  .folio { font-family: var(--font-mono); font-size: .85rem; color: var(--ink-secondary); text-align: center; margin: 1rem 0; }
+  .mixtle-result { display: flex; align-items: center; gap: 1.2rem; margin: 1.2rem 0; }
+  .mixtle-result img { width: 90px; flex-shrink: 0; }
+
+  @media print {
+    #modalBg, #chipInf, .no-print, .site-footer { display: none !important; }
+    body.exam-activo > * { display: none !important; }
+    body.exam-activo::before { content: "Impresión no disponible durante la evaluación."; display: block; padding: 2rem; font-family: sans-serif; }
+    .exam-bar { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<div id="wm" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="logo-wrap"><img src="imagen1.png" alt="Instituto de Educación Digital del Estado de Puebla"></div>
+  <div class="header-text">
+    <span class="inst-name">Instituto de Educación Digital del Estado de Puebla</span>
+    <span class="doc-title">Licenciatura en Sistemas Computacionales · Evaluación</span>
+  </div>
+</header>
+
+<!-- ═════════ PANTALLA 1: INICIO ═════════ -->
+<div id="pantallaInicio" class="screen">
+  <div class="class-hero">
+    <span class="class-label">Evaluación · Unidades 1 y 2</span>
+    <h1>Desarrollo de Habilidades Digitales</h1>
+    <span class="class-subtitle">Casos empresariales sobre alfabetización e información y sobre seguridad digital.</span>
+    <div class="meta-row">
+      <div class="meta-item">Programa educativo<span>Lic. en Sistemas Computacionales</span></div>
+      <div class="meta-item">Unidades evaluadas<span>1. Alfabetización e Información · 2. Seguridad</span></div>
+      <div class="meta-item">Reactivos<span>5 casos</span></div>
+      <div class="meta-item">Duración<span>20 minutos</span></div>
+      <div class="meta-item">Valor<span>10 puntos</span></div>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+    <div class="card start-card">
+      <span class="card-title">Indicaciones</span>
+      <ul class="info-list">
+        <li><span class="dot"></span><span>Lee con atención cada caso empresarial antes de responder y elige la <strong>mejor</strong> respuesta para el escenario descrito.</span></li>
+        <li><span class="dot"></span><span>En uno de los reactivos se te pedirá seleccionar <strong>dos</strong> opciones. Cada reactivo vale 2 puntos.</span></li>
+        <li><span class="dot"></span><span>Dispones de 20 minutos a partir del momento en que inicies; al terminar el tiempo, la evaluación se enviará automáticamente.</span></li>
+        <li><span class="dot"></span><span>Al concluir, presiona <strong>Enviar evaluación</strong> para ver tu resultado.</span></li>
+      </ul>
+
+      <div class="field">
+        <label for="inNombre">Nombre completo</label>
+        <input type="text" id="inNombre" autocomplete="off" maxlength="80" placeholder="Nombre y apellidos, como aparecen en tu lista">
+        <div class="hint">Verifica que esté bien escrito: aparecerá en tu resultado.</div>
+        <div class="err" id="errNombre">Escribe tu nombre completo (nombre y al menos un apellido).</div>
+      </div>
+
+      <div class="field" id="campoCodigo" style="display:none;">
+        <label for="inCodigo">Código de acceso</label>
+        <input type="text" id="inCodigo" autocomplete="off" maxlength="30" placeholder="Código proporcionado por el asesor">
+        <div class="err" id="errCodigo">El código de acceso no es correcto.</div>
+      </div>
+
+      <div style="margin-top:1.6rem; text-align:right;">
+        <button class="btn primary" id="btnIniciar" type="button">Comenzar evaluación</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════ PANTALLA 2: EVALUACIÓN ═════════ -->
+<div id="pantallaExamen" class="screen">
+  <div class="exam-bar">
+    <span class="who">Alumno: <strong id="barNombre"></strong></span>
+    <span class="prog" id="barProg">Respondidos: 0 de 5</span>
+    <span class="timer" id="barTimer">20:00</span>
+  </div>
+  <div class="page-wrapper" style="padding-top:2rem;">
+    <div id="listaPreguntas"></div>
+    <div class="submit-row">
+      <button class="btn primary" id="btnEnviar" type="button">Enviar evaluación</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════ PANTALLA 3: RESULTADO ═════════ -->
+<div id="pantallaResultado" class="screen">
+  <div class="page-wrapper" style="padding-top:2rem;">
+    <div class="result-card">
+      <div class="result-top">
+        <div>
+          <div class="r-name" id="rNombre"></div>
+          <div class="r-sub">Desarrollo de Habilidades Digitales · Evaluación de las Unidades 1 y 2</div>
+          <div class="r-sub" id="rFecha"></div>
+        </div>
+        <div class="r-score"><div class="big" id="rPuntaje">0</div><div class="small">de 10 puntos</div></div>
+      </div>
+      <div class="result-body">
+        <div class="stats-grid">
+          <div class="stat"><span class="s-label">Reactivos correctos</span><span class="s-val" id="rAciertos"></span></div>
+          <div class="stat"><span class="s-label">Tiempo empleado</span><span class="s-val" id="rTiempo"></span></div>
+          <div class="stat"><span class="s-label">Infracciones</span><span class="s-val" id="rInf"></span></div>
+          <div class="stat"><span class="s-label">Recargas de la página</span><span class="s-val" id="rRec"></span></div>
+          <div class="stat"><span class="s-label">Intentos de copia o captura</span><span class="s-val" id="rCop"></span></div>
+        </div>
+
+        <h4 style="margin-bottom:.4rem;">Resumen por tema</h4>
+        <ul class="review-list" id="rRevision"></ul>
+
+        <div class="mixtle-result">
+          <img src="imagen2.png" alt="Mixtle">
+          <p class="text-muted" style="margin:0;">Conserva este resultado y entrégalo a tu asesor en la forma que él indique. Las infracciones corresponden a las veces que se abandonó la ventana de la evaluación mientras estaba en curso.</p>
+        </div>
+        <div class="folio" id="rFolio"></div>
+        <div class="no-print" style="text-align:center;">
+          <button class="btn primary" id="btnPdf" type="button">Guardar como PDF / imprimir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <span>Instituto de Educación Digital del Estado de Puebla — Desarrollo de Habilidades Digitales</span>
+  <span><strong>Mtro. José Armando Vera Rodríguez</strong></span>
+</footer>
+
+<div id="chipInf" aria-live="polite"></div>
+
+<div id="modalBg" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3 id="modalTitulo"></h3>
+    <p id="modalTexto"></p>
+    <div class="m-actions" id="modalAcciones"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ═══ Parámetros configurables ═══════════════════════════════ */
+  var CLAVE_ALMACEN = 'hd_eval_u1u2_v1';
+  var DURACION_MIN = 20;
+  var PUNTOS_POR_REACTIVO = 2;
+  var CODIGO_ACCESO = '';              // Ejemplo: 'HD2026'. Vacío = sin código.
+  var MOSTRAR_RETROALIMENTACION = false; // true = muestra la explicación de cada reactivo al final.
+
+  /* ═══ Reactivos (sin respuestas; la clave va codificada) ═════ */
+  var QS = [
+    {
+      id: 'q1', tema: 'Unidad 1 · Hardware y software del PC',
+      contexto: 'Distribuidora Poblana del Valle, una empresa de logística con 40 laptops, recibe quejas del personal administrativo: al trabajar con hojas de cálculo grandes, videollamadas y varias pestañas del navegador abiertas al mismo tiempo, el equipo se vuelve extremadamente lento. El área de TI analiza una laptop representativa y obtiene el siguiente diagnóstico:',
+      items: ['Procesador: 35 % de uso promedio.', 'Unidad de estado sólido (SSD): 60 % de espacio libre.', 'Memoria RAM: 4 GB instalados, 97 % de uso.', 'Sistema operativo: todas las actualizaciones instaladas.'],
+      ordenado: false,
+      cierre: 'El presupuesto es limitado y la gerencia solicita la acción más directa y económica.',
+      pregunta: '¿Qué acción resolvería con mayor probabilidad el problema de lentitud?',
+      multi: false,
+      opciones: [
+        { id: 'a', t: 'Ampliar la memoria RAM de los equipos (por ejemplo, a 8 o 16 GB).' },
+        { id: 'b', t: 'Sustituir el procesador por uno de mayor frecuencia.' },
+        { id: 'c', t: 'Reemplazar el SSD por una unidad de mayor capacidad.' },
+        { id: 'd', t: 'Reinstalar el sistema operativo desde cero en cada laptop.' }
+      ]
+    },
+    {
+      id: 'q2', tema: 'Unidad 1 · Herramientas de Office',
+      contexto: 'El despacho contable Asesores Rivera prepara su cierre trimestral y tiene tres necesidades:',
+      items: ['Un presupuesto en el que los totales y los porcentajes se recalculen automáticamente al modificar cualquier cifra.', 'Una carta con membrete que se enviará de forma personalizada (nombre y adeudo de cada cliente) a 200 clientes cuyos datos ya están registrados en una lista.', 'Una exposición visual de resultados para la junta de socios.'],
+      ordenado: true,
+      pregunta: '¿Qué combinación de herramientas de la suite de Office es la más adecuada para cubrir las tres necesidades?',
+      multi: false,
+      opciones: [
+        { id: 'a', t: 'Excel para el presupuesto; Word para la carta, con combinación de correspondencia usando la lista de clientes como origen de datos; PowerPoint para la exposición.' },
+        { id: 'b', t: 'Word para el presupuesto; Excel para la carta; PowerPoint para almacenar la lista de clientes.' },
+        { id: 'c', t: 'Excel para el presupuesto y para redactar una por una las 200 cartas; PowerPoint solo para el membrete.' },
+        { id: 'd', t: 'PowerPoint para el presupuesto y la exposición; Word únicamente para guardar la lista de clientes.' }
+      ]
+    },
+    {
+      id: 'q3', tema: 'Unidad 1 · Evaluación de información en la web',
+      contexto: 'Una analista de la fintech PagoFácil Mx debe incluir, en un informe para inversionistas, una cifra sobre la adopción de pagos digitales en México. Encontró cuatro fuentes:',
+      items: ['Una infografía viral en redes sociales, sin autor ni fecha, que afirma que «9 de cada 10 mexicanos ya no usan efectivo».', 'El blog de un proveedor de terminales de cobro que presenta la misma cifra, sin explicar cómo se obtuvo.', 'Un reporte estadístico publicado el año pasado por una institución financiera pública, que detalla su metodología, su muestra y sus referencias.', 'Un mensaje reenviado por WhatsApp que cita «un estudio reciente», sin enlace ni autor.'],
+      ordenado: true,
+      pregunta: '¿Cuál es el MEJOR curso de acción para respaldar la cifra del informe?',
+      multi: false,
+      opciones: [
+        { id: 'a', t: 'Usar la fuente 1, porque su difusión masiva demuestra que la información es aceptada.' },
+        { id: 'b', t: 'Usar la fuente 3 y, antes de publicar, contrastar el dato con al menos otra fuente institucional o académica independiente.' },
+        { id: 'c', t: 'Usar la fuente 2, porque un proveedor del sector conoce mejor el mercado.' },
+        { id: 'd', t: 'Promediar las cifras de las cuatro fuentes para compensar posibles errores individuales.' }
+      ]
+    },
+    {
+      id: 'q4', tema: 'Unidad 2 · Phishing y suplantación de identidad',
+      contexto: 'Karen trabaja en el área de finanzas de Manufacturas del Centro. A las 4:50 p. m. recibe un correo desde la dirección director.general@manufacturas-centro.co (la dirección oficial de la empresa termina en .com.mx). El mensaje dice:',
+      cita: '«Estoy en una reunión confidencial por una adquisición y no puedo hablar. Necesito que transfieras hoy mismo $180,000 a la cuenta de un nuevo proveedor, cuyos datos van adjuntos. No lo comentes con nadie hasta que yo te avise.»',
+      pregunta: '¿Cuál es la respuesta MÁS adecuada de Karen?',
+      multi: false,
+      opciones: [
+        { id: 'a', t: 'Realizar la transferencia, pues la instrucción proviene de la máxima autoridad y el mensaje indica urgencia.' },
+        { id: 'b', t: 'Responder al mismo correo solicitando que confirme el monto y los datos bancarios antes de transferir.' },
+        { id: 'c', t: 'No realizar la transferencia; verificar la solicitud por un canal independiente y ya conocido (llamada al número registrado o en persona) y reportar el correo al área de seguridad informática.' },
+        { id: 'd', t: 'Reenviar el correo a sus compañeros de finanzas para que opinen y decidan en grupo si lo atienden.' }
+      ]
+    },
+    {
+      id: 'q5', tema: 'Unidad 2 · Protección de cuentas y dispositivos',
+      contexto: 'La clínica Salud Integral tiene 12 empleados que comparten una sola contraseña para entrar al sistema de citas y a la cuenta de correo institucional. Hace una semana, la dirección detectó que esa misma contraseña apareció en una filtración de datos de un sitio externo en el que un empleado se había registrado. La gerencia desea reducir rápidamente el riesgo de accesos no autorizados con el menor costo posible.',
+      pregunta: '¿Qué DOS acciones deben implementar?',
+      multi: true, maxSel: 2,
+      opciones: [
+        { id: 'a', t: 'Activar la verificación en dos pasos en el correo institucional y en el sistema de citas.' },
+        { id: 'b', t: 'Mantener la contraseña compartida, pero cambiarla cada día y anotarla en un cuaderno en recepción.' },
+        { id: 'c', t: 'Crear cuentas individuales con contraseñas largas y únicas, apoyadas en un administrador de contraseñas.' },
+        { id: 'd', t: 'Instalar un segundo antivirus en todos los equipos para detectar la contraseña filtrada.' },
+        { id: 'e', t: 'Desactivar las actualizaciones automáticas para evitar que cambien las configuraciones de acceso.' }
+      ]
+    }
+  ];
+
+  /* Clave de respuestas y retroalimentación (codificada) */
+  var KEY_BLOB = 'eyJxMSI6IHsib2siOiBbImEiXSwgIndoeSI6ICJMYSBSQU0gYWwgOTcgJSBpbmRpY2EgcXVlIGVsIMOhcmVhIGRlIHRyYWJham8gdGVtcG9yYWwgZGVsIGVxdWlwbyBlc3TDoSBzYXR1cmFkYSBhbCBlamVjdXRhciB2YXJpYXMgYXBsaWNhY2lvbmVzIGEgbGEgdmV6LiBFbCBwcm9jZXNhZG9yIHkgZWwgU1NEIHRpZW5lbiBob2xndXJhLCBwb3IgbG8gcXVlIG5vIHNvbiBlbCBjdWVsbG8gZGUgYm90ZWxsYSwgeSByZWluc3RhbGFyIGVsIHNpc3RlbWEgb3BlcmF0aXZvIG5vIGF1bWVudGEgbGEgbWVtb3JpYSBkaXNwb25pYmxlLiJ9LCAicTIiOiB7Im9rIjogWyJhIl0sICJ3aHkiOiAiRXhjZWwgY2FsY3VsYSB5IHJlY2FsY3VsYSBmw7NybXVsYXMgYXV0b23DoXRpY2FtZW50ZTsgV29yZCwgY29uIGNvbWJpbmFjacOzbiBkZSBjb3JyZXNwb25kZW5jaWEsIHBlcnNvbmFsaXphIGRvY3VtZW50b3MgbWFzaXZvcyBhIHBhcnRpciBkZSB1bmEgbGlzdGEgZGUgZGF0b3M7IFBvd2VyUG9pbnQgZXN0w6EgZGlzZcOxYWRvIHBhcmEgcHJlc2VudGFjaW9uZXMgdmlzdWFsZXMuIn0sICJxMyI6IHsib2siOiBbImIiXSwgIndoeSI6ICJVbmEgZnVlbnRlIHF1ZSBkZXRhbGxhIG1ldG9kb2xvZ8OtYSwgbXVlc3RyYSB5IHJlZmVyZW5jaWFzIGVzIGxhIG3DoXMgY29uZmlhYmxlOyBhdW4gYXPDrSwgY29udHJhc3RhcmxhIGNvbiBvdHJhIGZ1ZW50ZSBpbmRlcGVuZGllbnRlIHJlZHVjZSBlbCByaWVzZ28gZGUgZXJyb3IuIExhIGRpZnVzacOzbiBtYXNpdmEsIGVsIGludGVyw6lzIGNvbWVyY2lhbCB5IGxvcyBtZW5zYWplcyBzaW4gYXV0b3LDrWEgbm8gc29uIGNyaXRlcmlvcyBkZSBjb25maWFiaWxpZGFkLiJ9LCAicTQiOiB7Im9rIjogWyJjIl0sICJ3aHkiOiAiRWwgZG9taW5pbyBlcyBzb3NwZWNob3NvICguY28gZW4gbHVnYXIgZGUgLmNvbS5teCkgeSBoYXkgdXJnZW5jaWEsIHNlY3JlY8OtYSB5IHVuYSB0cmFuc2ZlcmVuY2lhIGEgdW5hIGN1ZW50YSBudWV2YTogc2XDsWFsZXMgZGUgc3VwbGFudGFjacOzbiBkZSBpZGVudGlkYWQuIFJlc3BvbmRlciBhbCBtaXNtbyBjb3JyZW8gY29udGFjdGEgYWwgYXRhY2FudGU7IGxvIGNvcnJlY3RvIGVzIHZlcmlmaWNhciBwb3IgdW4gY2FuYWwgaW5kZXBlbmRpZW50ZSB5IHJlcG9ydGFyLiJ9LCAicTUiOiB7Im9rIjogWyJhIiwgImMiXSwgIndoeSI6ICJMYSB2ZXJpZmljYWNpw7NuIGVuIGRvcyBwYXNvcyBwcm90ZWdlIGluY2x1c28gc2kgbGEgY29udHJhc2XDsWEgeWEgZnVlIGZpbHRyYWRhLCB5IGxhcyBjdWVudGFzIGluZGl2aWR1YWxlcyBjb24gY29udHJhc2XDsWFzIMO6bmljYXMgZWxpbWluYW4gbGEgcmV1dGlsaXphY2nDs24geSBwZXJtaXRlbiByYXN0cmVhciBhY2Nlc29zLiBDYW1iaWFyIHkgYW5vdGFyIHVuYSBjbGF2ZSBjb21wYXJ0aWRhLCB1biBzZWd1bmRvIGFudGl2aXJ1cyBvIGRlc2FjdGl2YXIgYWN0dWFsaXphY2lvbmVzIG5vIGF0YWNhbiBlbCBwcm9ibGVtYSBkZSBmb25kby4ifX0=';
+  function leerClave() {
+    try { return JSON.parse(decodeURIComponent(escape(atob(KEY_BLOB)))); } catch (e) { return {}; }
+  }
+
+  /* ═══ Utilidades ═════════════════════════════════════════════ */
+  function $(id) { return document.getElementById(id); }
+  function randInt(n) {
+    if (window.crypto && crypto.getRandomValues) {
+      var a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
+  function barajar(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = randInt(i + 1); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function qPorId(id) { for (var i = 0; i < QS.length; i++) if (QS[i].id === id) return QS[i]; return null; }
+  function mmss(ms) {
+    if (ms < 0) ms = 0;
+    var s = Math.floor(ms / 1000), m = Math.floor(s / 60); s = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function hash(str) {
+    var h = 5381;
+    for (var i = 0; i < str.length; i++) { h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; }
+    var s = h.toString(36).toUpperCase();
+    while (s.length < 7) s = '0' + s;
+    return s;
+  }
+  function limpiarNombre(n) { return n.replace(/\s+/g, ' ').trim(); }
+
+  /* ═══ Estado persistente ═════════════════════════════════════ */
+  var S = null;
+  function cargar() { try { return JSON.parse(localStorage.getItem(CLAVE_ALMACEN)); } catch (e) { return null; } }
+  function guardar() { try { localStorage.setItem(CLAVE_ALMACEN, JSON.stringify(S)); } catch (e) {} }
+  function examenActivo() { return !!(S && S.iniciado && !S.finalizado); }
+
+  /* ═══ Pantallas y marca de agua ══════════════════════════════ */
+  function mostrar(id) {
+    ['pantallaInicio', 'pantallaExamen', 'pantallaResultado'].forEach(function (p) { $(p).classList.remove('on'); });
+    $(id).classList.add('on');
+    window.scrollTo(0, 0);
+  }
+  function marcaDeAgua(nombre, opacidad) {
+    var texto = nombre.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    var tam = Math.max(11, Math.min(22, Math.floor(560 / Math.max(nombre.length, 1))));
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="420" height="260">' +
+      '<g transform="rotate(-28 210 130)"><text x="210" y="130" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="' + tam + '" font-weight="700" fill="#490b58" fill-opacity="' + opacidad + '">' + texto + '</text></g></svg>';
+    var w = $('wm');
+    w.style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '")';
+    w.style.display = 'block';
+  }
+
+  /* ═══ Modal propio ═══════════════════════════════════════════ */
+  function modal(titulo, texto, botones) {
+    $('modalTitulo').textContent = titulo;
+    $('modalTexto').textContent = texto;
+    var cont = $('modalAcciones'); cont.innerHTML = '';
+    botones.forEach(function (b) {
+      var el = document.createElement('button');
+      el.type = 'button'; el.className = 'btn' + (b.primario ? ' primary' : ''); el.textContent = b.t;
+      el.addEventListener('click', function () { cerrarModal(); if (b.fn) b.fn(); });
+      cont.appendChild(el);
+    });
+    $('modalBg').classList.add('on');
+  }
+  function cerrarModal() { $('modalBg').classList.remove('on'); }
+  function modalAbierto() { return $('modalBg').classList.contains('on'); }
+
+  /* ═══ Inicio ═════════════════════════════════════════════════ */
+  if (CODIGO_ACCESO) $('campoCodigo').style.display = 'block';
+
+  $('btnIniciar').addEventListener('click', function () {
+    var nombre = limpiarNombre($('inNombre').value);
+    var okNombre = nombre.length >= 6 && nombre.indexOf(' ') > 0;
+    $('errNombre').style.display = okNombre ? 'none' : 'block';
+    var okCodigo = true;
+    if (CODIGO_ACCESO) {
+      okCodigo = $('inCodigo').value.trim().toLowerCase() === CODIGO_ACCESO.toLowerCase();
+      $('errCodigo').style.display = okCodigo ? 'none' : 'block';
+    }
+    if (!okNombre || !okCodigo) return;
+
+    var ordenOpc = {};
+    QS.forEach(function (q) { ordenOpc[q.id] = barajar(q.opciones.map(function (o) { return o.id; })); });
+    S = {
+      nombre: nombre, iniciado: true, finalizado: false, inicio: Date.now(),
+      ordenPreg: barajar(QS.map(function (q) { return q.id; })), ordenOpc: ordenOpc,
+      resp: {}, infracciones: 0, recargas: 0, copias: 0
+    };
+    guardar();
+    montarExamen();
+  });
+
+  /* ═══ Montaje de la evaluación ═══════════════════════════════ */
+  var timerId = null;
+  function montarExamen() {
+    document.body.classList.add('exam-activo');
+    marcaDeAgua(S.nombre, 0.07);
+    $('barNombre').textContent = S.nombre;
+    var cont = $('listaPreguntas'); cont.innerHTML = '';
+
+    S.ordenPreg.forEach(function (qid, idx) {
+      var q = qPorId(qid);
+      var card = document.createElement('div'); card.className = 'q-card';
+
+      var head = document.createElement('div'); head.className = 'q-head';
+      var h1 = document.createElement('span'); h1.textContent = 'Caso ' + (idx + 1) + ' de ' + QS.length;
+      var h2 = document.createElement('span'); h2.className = 'q-tema'; h2.textContent = 'Valor: ' + PUNTOS_POR_REACTIVO + ' puntos';
+      head.appendChild(h1); head.appendChild(h2); card.appendChild(head);
+
+      var body = document.createElement('div'); body.className = 'q-body';
+      var ctx = document.createElement('p'); ctx.className = 'q-context'; ctx.textContent = q.contexto; body.appendChild(ctx);
+      if (q.items) {
+        var lst = document.createElement(q.ordenado ? 'ol' : 'ul'); lst.className = 'q-items';
+        q.items.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; lst.appendChild(li); });
+        body.appendChild(lst);
+      }
+      if (q.cita) { var bq = document.createElement('div'); bq.className = 'q-quote'; bq.textContent = q.cita; body.appendChild(bq); }
+      if (q.cierre) { var cl = document.createElement('p'); cl.className = 'q-context'; cl.textContent = q.cierre; body.appendChild(cl); }
+
+      var ask = document.createElement('div'); ask.className = 'q-ask'; ask.textContent = q.pregunta; body.appendChild(ask);
+      var hint = document.createElement('div'); hint.className = 'q-hint';
+      hint.textContent = q.multi ? 'Seleccione DOS opciones.' : 'Seleccione UNA opción.';
+      body.appendChild(hint);
+
+      var grupo = document.createElement('div'); grupo.setAttribute('role', q.multi ? 'group' : 'radiogroup');
+      S.ordenOpc[q.id].forEach(function (oid, k) {
+        var op = null; q.opciones.forEach(function (o) { if (o.id === oid) op = o; });
+        var lab = document.createElement('label'); lab.className = 'opt' + (q.multi ? ' multi' : ''); lab.setAttribute('data-oid', oid);
+        var inp = document.createElement('input'); inp.type = q.multi ? 'checkbox' : 'radio'; inp.name = q.id; inp.value = oid;
+        var let_ = document.createElement('span'); let_.className = 'letter'; let_.textContent = String.fromCharCode(65 + k);
+        var txt = document.createElement('span'); txt.textContent = op.t;
+        lab.appendChild(inp); lab.appendChild(let_); lab.appendChild(txt);
+        inp.addEventListener('change', function () { alResponder(q, grupo); });
+        grupo.appendChild(lab);
+      });
+      body.appendChild(grupo);
+      card.appendChild(body);
+      cont.appendChild(card);
+
+      // restaurar respuestas
+      var prev = S.resp[q.id] || [];
+      var inputs = grupo.querySelectorAll('input');
+      for (var i = 0; i < inputs.length; i++) if (prev.indexOf(inputs[i].value) !== -1) inputs[i].checked = true;
+      pintarGrupo(q, grupo);
+    });
+
+    actualizarProgreso();
+    actualizarChip();
+    mostrar('pantallaExamen');
+    iniciarReloj();
+  }
+
+  function pintarGrupo(q, grupo) {
+    var inputs = grupo.querySelectorAll('input');
+    var marcados = 0, i;
+    for (i = 0; i < inputs.length; i++) if (inputs[i].checked) marcados++;
+    for (i = 0; i < inputs.length; i++) {
+      var lab = inputs[i].parentNode;
+      lab.classList.toggle('sel', inputs[i].checked);
+      var bloquear = q.multi && marcados >= (q.maxSel || 2) && !inputs[i].checked;
+      inputs[i].disabled = bloquear;
+      lab.classList.toggle('dis', bloquear);
+    }
+  }
+  function alResponder(q, grupo) {
+    var sel = [], inputs = grupo.querySelectorAll('input');
+    for (var i = 0; i < inputs.length; i++) if (inputs[i].checked) sel.push(inputs[i].value);
+    S.resp[q.id] = sel; guardar();
+    pintarGrupo(q, grupo); actualizarProgreso();
+  }
+  function respondido(q) {
+    var r = S.resp[q.id] || [];
+    return q.multi ? r.length === (q.maxSel || 2) : r.length === 1;
+  }
+  function actualizarProgreso() {
+    var n = 0; QS.forEach(function (q) { if (respondido(q)) n++; });
+    $('barProg').textContent = 'Respondidos: ' + n + ' de ' + QS.length;
+  }
+
+  /* ═══ Reloj ══════════════════════════════════════════════════ */
+  function iniciarReloj() {
+    if (timerId) clearInterval(timerId);
+    function tick() {
+      if (!examenActivo()) return;
+      var resto = S.inicio + DURACION_MIN * 60000 - Date.now();
+      $('barTimer').textContent = mmss(resto);
+      $('barTimer').classList.toggle('low', resto <= 180000);
+      if (resto <= 0) { finalizar(true); }
+    }
+    tick(); timerId = setInterval(tick, 1000);
+  }
+
+  /* ═══ Detección de salidas de la ventana ═════════════════════ */
+  var fuera = false, avisoPendiente = false, descargando = false;
+  function salida() {
+    if (!examenActivo() || fuera || descargando) return;
+    fuera = true; avisoPendiente = true;
+    S.infracciones = (S.infracciones || 0) + 1; guardar(); actualizarChip();
+  }
+  function regreso() {
+    if (!fuera) return;
+    fuera = false;
+    if (examenActivo() && avisoPendiente) {
+      avisoPendiente = false;
+      modal('Salida de la evaluación detectada',
+        'Se registró que abandonaste la ventana de la evaluación. Infracciones acumuladas: ' + S.infracciones + '.',
+        [{ t: 'Continuar', primario: true }]);
+    }
+  }
+  window.addEventListener('blur', salida);
+  window.addEventListener('focus', regreso);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) salida(); else regreso(); });
+
+  function actualizarChip() {
+    var c = $('chipInf');
+    if (examenActivo() && S.infracciones > 0) { c.textContent = 'Infracciones: ' + S.infracciones; c.style.display = 'block'; }
+    else c.style.display = 'none';
+  }
+
+  /* ═══ Bloqueo de copia y atajos ══════════════════════════════ */
+  function contarCopia() { if (examenActivo()) { S.copias = (S.copias || 0) + 1; guardar(); } }
+  function esCampoTexto(t) { return t && t.tagName === 'INPUT' && t.type === 'text'; }
+
+  ['copy', 'cut', 'paste', 'dragstart'].forEach(function (ev) {
+    document.addEventListener(ev, function (e) {
+      if (examenActivo() || ev === 'dragstart' || !esCampoTexto(e.target)) { e.preventDefault(); contarCopia(); }
+    });
+  });
+  document.addEventListener('contextmenu', function (e) { if (!esCampoTexto(e.target)) { e.preventDefault(); contarCopia(); } });
+  document.addEventListener('selectstart', function (e) { if (!esCampoTexto(e.target)) e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    if (!examenActivo()) return;
+    var k = (e.key || '').toLowerCase();
+    var ctrl = e.ctrlKey || e.metaKey;
+    var bloquear = false;
+    if (ctrl && ['c', 'x', 'v', 'a', 's', 'p', 'u', 'f', 'g'].indexOf(k) !== -1) bloquear = true;
+    if (e.key === 'F12') bloquear = true;
+    if (ctrl && e.shiftKey && ['i', 'j', 'c', 'k'].indexOf(k) !== -1) bloquear = true;
+    if (bloquear) { e.preventDefault(); e.stopPropagation(); contarCopia(); }
+  }, true);
+  document.addEventListener('keyup', function (e) {
+    if (examenActivo() && e.key === 'PrintScreen') {
+      contarCopia();
+      try { navigator.clipboard.writeText(' '); } catch (err) {}
+    }
+  });
+
+  window.addEventListener('beforeunload', function (e) {
+    if (examenActivo()) {
+      descargando = true; setTimeout(function () { descargando = false; }, 2500);
+      e.preventDefault(); e.returnValue = '';
+    }
+  });
+
+  /* ═══ Envío ══════════════════════════════════════════════════ */
+  $('btnEnviar').addEventListener('click', function () {
+    var faltan = 0; QS.forEach(function (q) { if (!respondido(q)) faltan++; });
+    if (faltan > 0) {
+      modal('Reactivos sin responder',
+        'Tienes ' + faltan + (faltan === 1 ? ' reactivo' : ' reactivos') + ' sin responder. ¿Deseas enviar la evaluación de todos modos?',
+        [{ t: 'Seguir respondiendo' }, { t: 'Enviar ahora', primario: true, fn: function () { finalizar(false); } }]);
+    } else {
+      modal('Enviar evaluación', 'Una vez enviada no podrás modificar tus respuestas. ¿Confirmas el envío?',
+        [{ t: 'Revisar' }, { t: 'Enviar', primario: true, fn: function () { finalizar(false); } }]);
+    }
+  });
+
+  function finalizar(porTiempo) {
+    if (!examenActivo()) return;
+    if (timerId) clearInterval(timerId);
+    var clave = leerClave(), puntos = 0, detalle = {};
+    QS.forEach(function (q) {
+      var k = (clave[q.id] && clave[q.id].ok) ? clave[q.id].ok.slice().sort().join(',') : '';
+      var r = (S.resp[q.id] || []).slice().sort().join(',');
+      var bien = (k !== '' && k === r);
+      detalle[q.id] = bien; if (bien) puntos += PUNTOS_POR_REACTIVO;
+    });
+    S.finalizado = true; S.fin = Date.now(); S.puntos = puntos; S.detalle = detalle; S.porTiempo = !!porTiempo;
+    S.folio = 'HD-U12-' + hash(S.nombre + '|' + puntos + '|' + S.fin + '|' + S.infracciones + '|' + S.recargas);
+    guardar();
+    document.body.classList.remove('exam-activo');
+    cerrarModal();
+    mostrarResultado();
+  }
+
+  /* ═══ Resultado ══════════════════════════════════════════════ */
+  function mostrarResultado() {
+    document.body.classList.remove('exam-activo');
+    $('chipInf').style.display = 'none';
+    marcaDeAgua(S.nombre, 0.13);
+    $('rNombre').textContent = S.nombre;
+    var f;
+    try { f = new Date(S.fin).toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' }); } catch (e) { f = new Date(S.fin).toString(); }
+    $('rFecha').textContent = f + (S.porTiempo ? ' · Enviada automáticamente al terminar el tiempo' : '');
+    $('rPuntaje').textContent = S.puntos;
+    var ac = 0; QS.forEach(function (q) { if (S.detalle[q.id]) ac++; });
+    $('rAciertos').textContent = ac + ' de ' + QS.length;
+    $('rTiempo').textContent = mmss(Math.min(S.fin - S.inicio, DURACION_MIN * 60000));
+    $('rInf').textContent = S.infracciones || 0;
+    $('rRec').textContent = S.recargas || 0;
+    $('rCop').textContent = S.copias || 0;
+    $('rFolio').textContent = 'Folio de resultado: ' + S.folio;
+
+    var clave = leerClave(), ul = $('rRevision'); ul.innerHTML = '';
+    QS.forEach(function (q) {
+      var li = document.createElement('li');
+      var mk = document.createElement('span'); mk.className = 'mark ' + (S.detalle[q.id] ? 'ok' : 'no'); mk.textContent = S.detalle[q.id] ? 'Correcto' : 'Incorrecto';
+      var tx = document.createElement('span'); tx.textContent = q.tema;
+      if (MOSTRAR_RETROALIMENTACION && clave[q.id] && clave[q.id].why) {
+        var w = document.createElement('span'); w.className = 'why'; w.textContent = clave[q.id].why; tx.appendChild(w);
+      }
+      li.appendChild(mk); li.appendChild(tx); ul.appendChild(li);
+    });
+    mostrar('pantallaResultado');
+  }
+  $('btnPdf').addEventListener('click', function () { window.print(); });
+
+  /* ═══ Arranque ═══════════════════════════════════════════════ */
+  S = cargar();
+  if (S && S.finalizado) {
+    mostrarResultado();
+  } else if (S && S.iniciado) {
+    S.recargas = (S.recargas || 0) + 1; guardar();
+    if (S.inicio + DURACION_MIN * 60000 - Date.now() <= 0) {
+      document.body.classList.add('exam-activo'); finalizar(true);
+    } else {
+      montarExamen();
+      modal('Página recargada',
+        'Se detectó que la página se recargó o se volvió a abrir durante la evaluación. Recargas registradas: ' + S.recargas + '. Tus respuestas y el tiempo restante se conservaron.',
+        [{ t: 'Continuar', primario: true }]);
+    }
+  } else {
+    S = null;
+    mostrar('pantallaInicio');
+  }
+})();
+</script>
+
+</body>
+</html>
