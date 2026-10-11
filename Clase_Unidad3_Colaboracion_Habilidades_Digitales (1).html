@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 3 — Colaboración y Comunicación | Desarrollo de Habilidades Digitales</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  /* ── Estilos complementarios de esta clase ─────────────────── */
+  .mascota-flotante { max-width: 105px; float: right; margin: 0 0 1rem 1.5rem; }
+
+  .mixtle-say { display: flex; gap: 1rem; align-items: flex-start; margin: 1.4rem 0; }
+  .mixtle-say img { width: 58px; height: 58px; border-radius: 50%; flex-shrink: 0; background: var(--white); box-shadow: var(--shadow-sm); }
+  .mixtle-say .bubble { position: relative; background: var(--guinda-light); border: 1px solid #D8A8BA; border-radius: var(--radius-lg); padding: .9rem 1.2rem; font-style: italic; color: var(--guinda-dark); font-size: .97rem; }
+  .mixtle-say .bubble::before { content: ""; position: absolute; left: -9px; top: 18px; width: 16px; height: 16px; background: var(--guinda-light); border-left: 1px solid #D8A8BA; border-bottom: 1px solid #D8A8BA; transform: rotate(45deg); }
+  .mixtle-say .bubble p { margin: 0; }
+
+  .btn { font-family: var(--font-ui); font-size: .85rem; font-weight: 600; cursor: pointer; padding: .6rem 1.1rem; border-radius: var(--radius-md); border: 1.5px solid var(--guinda); background: var(--white); color: var(--guinda); transition: background .15s, color .15s; }
+  .btn:hover { background: var(--guinda-light); }
+  .btn.primary { background: var(--guinda); color: var(--white); }
+  .btn.primary:hover { background: var(--guinda-dark); }
+  .btn:focus-visible, .qopt:focus-visible, .flip:focus-visible, .step-btn:focus-visible, .role-btn:focus-visible, .tab-btn:focus-visible { outline: 3px solid var(--guinda-rule); outline-offset: 2px; }
+
+  .mini-badge { display: inline-block; font-family: var(--font-ui); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--guinda-light); color: var(--guinda); border: 1px solid #D8A8BA; border-radius: 999px; padding: .1rem .65rem; margin-bottom: .6rem; }
+
+  /* Agenda de la sesión */
+  .agenda { display: grid; grid-template-columns: 2fr 5fr 2fr; gap: .8rem; margin: 1.25rem 0; }
+  @media (max-width: 700px) { .agenda { grid-template-columns: 1fr; } }
+  .agenda .ag { background: var(--off-white); border: 1px solid var(--border); border-top: 4px solid var(--guinda); border-radius: var(--radius-md); padding: .9rem 1.1rem; }
+  .agenda .ag .ag-t { font-family: var(--font-ui); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--guinda); font-weight: 700; display: block; }
+  .agenda .ag .ag-m { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--guinda-dark); line-height: 1.1; }
+  .agenda .ag .ag-m small { font-family: var(--font-ui); font-size: .75rem; font-weight: 500; color: var(--ink-muted); }
+  .agenda .ag p { font-size: .88rem; margin: .4rem 0 0; line-height: 1.5; color: var(--ink-secondary); }
+  .agenda-bar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; margin: .4rem 0 1.4rem; border: 1px solid var(--border); }
+  .agenda-bar span:nth-child(1) { flex: 40; background: var(--guinda-rule); }
+  .agenda-bar span:nth-child(2) { flex: 100; background: var(--guinda); }
+  .agenda-bar span:nth-child(3) { flex: 40; background: var(--guinda-mid); }
+
+  /* Cuestionarios interactivos */
+  .quiz-head { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .8rem; }
+  .quiz-score { font-family: var(--font-ui); font-size: .85rem; font-weight: 700; color: var(--guinda); background: var(--guinda-light); border: 1px solid #D8A8BA; border-radius: 999px; padding: .2rem .9rem; }
+  .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+  .quiz-grid.one { grid-template-columns: 1fr; }
+  @media (max-width: 700px) { .quiz-grid { grid-template-columns: 1fr; } }
+  .qcard { background: var(--white); border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm); }
+  .qcard .qtxt { font-size: .95rem; line-height: 1.55; margin-bottom: .7rem; }
+  .qopts { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .qopt { font-family: var(--font-ui); font-size: .8rem; font-weight: 600; cursor: pointer; padding: .45rem .85rem; border-radius: 999px; border: 1.5px solid var(--border-strong); background: var(--off-white); color: var(--ink); transition: all .15s; text-align: left; }
+  .qopt:hover:not(:disabled) { border-color: var(--guinda); background: var(--guinda-light); }
+  .qopt:disabled { cursor: default; }
+  .qopt.correct { background: var(--guinda); border-color: var(--guinda); color: var(--white); }
+  .qopt.wrong { background: var(--white); border-color: #A3173F; color: #A3173F; text-decoration: line-through; }
+  .qopt.reveal { border: 2px solid var(--guinda); color: var(--guinda); }
+  .qwhy { display: none; margin-top: .7rem; padding: .6rem .8rem; border-left: 3px solid var(--guinda); background: var(--guinda-light); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: .88rem; line-height: 1.55; }
+  .qwhy.show { display: block; }
+  .qwhy b { color: var(--guinda-dark); }
+  .quiz-final { display: none; margin-top: 1rem; background: var(--guinda); color: var(--white); border-radius: var(--radius-lg); padding: 1rem 1.3rem; font-family: var(--font-ui); font-size: .92rem; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .quiz-final.show { display: flex; }
+  .quiz-final .btn { background: var(--white); }
+
+  /* Flujo del Equipo Nova */
+  .stepper { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1rem 0; }
+  .step-btn { flex: 1; min-width: 120px; font-family: var(--font-ui); cursor: pointer; background: var(--off-white); border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); padding: .7rem .6rem; text-align: center; position: relative; transition: all .15s; }
+  .step-btn .sn { display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-muted); }
+  .step-btn .st { display: block; font-size: .9rem; font-weight: 700; color: var(--guinda-dark); }
+  .step-btn:hover { border-color: var(--guinda); }
+  .step-btn.on { background: var(--guinda); border-color: var(--guinda); }
+  .step-btn.on .sn { color: rgba(255,255,255,.7); }
+  .step-btn.on .st { color: var(--white); }
+  .step-panel { background: var(--off-white); border: 1px solid var(--border); border-left: 4px solid var(--guinda); border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 1rem 1.3rem; }
+  .step-panel .sp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-top: .6rem; }
+  @media (max-width: 700px) { .step-panel .sp-grid { grid-template-columns: 1fr; } }
+  .step-panel .sp-box { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .6rem .8rem; font-size: .88rem; line-height: 1.5; }
+  .step-panel .sp-box b { display: block; font-family: var(--font-ui); font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; color: var(--guinda); margin-bottom: .2rem; }
+  .step-progress { height: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin-top: .4rem; }
+  .step-progress i { display: block; height: 100%; background: var(--guinda); width: 20%; transition: width .3s; }
+
+  /* Mapa de herramientas Google */
+  .map-wrap { background: var(--off-white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; margin: 1.2rem 0; }
+  .map-wrap > svg { width: 100%; height: auto; display: block; max-width: 560px; margin: 0 auto; }
+  .nd { cursor: pointer; }
+  .nd .nd-bg { fill: var(--white); stroke: var(--guinda-rule); stroke-width: 2; transition: all .15s; }
+  .nd:hover .nd-bg, .nd:focus .nd-bg { fill: var(--guinda-light); stroke: var(--guinda); }
+  .nd.on .nd-bg { fill: var(--guinda); stroke: var(--guinda-dark); }
+  .nd .nd-ic { stroke: var(--guinda); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .nd.on .nd-ic { stroke: var(--white); }
+  .nd text { font-family: var(--font-ui); font-size: 11px; font-weight: 700; fill: var(--guinda-dark); text-anchor: middle; pointer-events: none; }
+  .nd.on text { fill: var(--white); }
+  .nd:focus { outline: none; }
+  .tool-panel { background: var(--white); border: 1px solid var(--border-strong); border-top: 4px solid var(--guinda); border-radius: var(--radius-md); padding: 1rem 1.3rem; margin-top: .8rem; }
+  .tool-panel h4 { color: var(--guinda); margin-bottom: .4rem; font-size: 1.15rem; }
+  .tool-panel .tp-row { display: grid; grid-template-columns: 110px 1fr; gap: .6rem; padding: .4rem 0; border-bottom: 1px solid var(--border); font-size: .93rem; }
+  .tool-panel .tp-row:last-child { border-bottom: none; }
+  .tool-panel .tp-row b { font-family: var(--font-ui); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--guinda-mid); padding-top: .15rem; }
+  @media (max-width: 600px) { .tool-panel .tp-row { grid-template-columns: 1fr; gap: .1rem; } }
+
+  /* Matriz de permisos */
+  .role-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .8rem; }
+  .role-btn { font-family: var(--font-ui); font-size: .85rem; font-weight: 700; cursor: pointer; padding: .55rem 1.1rem; border-radius: var(--radius-md); border: 1.5px solid var(--guinda); background: var(--white); color: var(--guinda); }
+  .role-btn.on { background: var(--guinda); color: var(--white); }
+  .perm-table td, .perm-table th { text-align: center; }
+  .perm-table td:first-child, .perm-table th:first-child { text-align: left; }
+  .perm-table td { transition: background .2s; }
+  .pm { display: inline-block; width: 22px; height: 22px; border-radius: 50%; line-height: 22px; font-size: .8rem; font-weight: 700; font-family: var(--font-ui); }
+  .pm.yes { background: var(--guinda); color: var(--white); }
+  .pm.no { background: var(--surface); color: var(--ink-muted); border: 1px solid var(--border); }
+  .pm.opt { background: var(--white); color: var(--guinda); border: 1.5px dashed var(--guinda); }
+  .perm-table tr.hl td { background: var(--guinda-light) !important; }
+  .perm-note { font-family: var(--font-ui); font-size: .78rem; color: var(--ink-muted); }
+
+  /* Checklist con progreso */
+  .prog-wrap { margin-bottom: .8rem; }
+  .prog-bar { height: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+  .prog-bar i { display: block; height: 100%; width: 0; background: var(--guinda); transition: width .3s; }
+  .prog-text { font-family: var(--font-ui); font-size: .8rem; font-weight: 700; color: var(--guinda); margin-top: .3rem; }
+  .task-list { list-style: none; padding: 0; margin: 0; }
+  .task-list li { margin-bottom: .55rem; }
+  .task-list label { display: flex; gap: .8rem; align-items: flex-start; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: .7rem .95rem; cursor: pointer; font-size: .95rem; line-height: 1.55; transition: all .15s; }
+  .task-list label:hover { border-color: var(--guinda-rule); }
+  .task-list input { position: absolute; opacity: 0; pointer-events: none; }
+  .task-list .box { flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--guinda); margin-top: 2px; display: flex; align-items: center; justify-content: center; color: transparent; font-size: .8rem; font-weight: 700; font-family: var(--font-ui); }
+  .task-list input:checked + .box { background: var(--guinda); color: var(--white); }
+  .task-list label.done { background: var(--guinda-light); border-color: var(--guinda); }
+  .task-list input:focus-visible + .box { outline: 3px solid var(--guinda-rule); outline-offset: 2px; }
+
+  /* Pestañas Meet */
+  .tabs { display: flex; gap: .4rem; border-bottom: 2px solid var(--guinda); flex-wrap: wrap; }
+  .tab-btn { font-family: var(--font-ui); font-size: .85rem; font-weight: 700; cursor: pointer; padding: .6rem 1.3rem; border: 1.5px solid var(--border-strong); border-bottom: none; background: var(--off-white); color: var(--ink-secondary); border-radius: var(--radius-md) var(--radius-md) 0 0; }
+  .tab-btn.on { background: var(--guinda); color: var(--white); border-color: var(--guinda); }
+  .tab-pane { display: none; background: var(--off-white); border: 1px solid var(--border); border-top: none; padding: 1rem 1.3rem; border-radius: 0 0 var(--radius-md) var(--radius-md); }
+  .tab-pane.on { display: block; }
+  .tab-pane ul { margin-bottom: 0; }
+
+  /* Tarjetas de redes sociales */
+  .net-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; margin: 1.2rem 0; }
+  @media (max-width: 800px) { .net-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .net-grid { grid-template-columns: 1fr; } }
+  .net { background: var(--white); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm); }
+  .net { display: flex; flex-direction: column; }
+  .net p { flex: 1; }
+  .net h4 { color: var(--guinda); font-family: var(--font-display); font-size: 1.25rem; margin-bottom: .1rem; }
+  .net .net-for { font-family: var(--font-ui); font-size: .74rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .06em; display: block; margin-bottom: .6rem; }
+  .net p { font-size: .88rem; line-height: 1.5; margin-bottom: .6rem; }
+  .meter { display: grid; grid-template-columns: 82px 1fr; align-items: center; gap: .5rem; font-family: var(--font-ui); font-size: .68rem; color: var(--ink-secondary); margin-bottom: .25rem; }
+  .meter .mbar { display: flex; gap: 3px; }
+  .meter .mbar i { height: 8px; flex: 1; border-radius: 2px; background: var(--surface); border: 1px solid var(--border); }
+  .meter .mbar i.f { background: var(--guinda); border-color: var(--guinda); }
+
+  /* Tarjetas que se voltean */
+  .flip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .9rem; margin: 1.2rem 0; }
+  @media (max-width: 800px) { .flip-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .flip-grid { grid-template-columns: 1fr; } }
+  .flip { perspective: 900px; background: none; border: none; padding: 0; cursor: pointer; text-align: left; min-height: 150px; font: inherit; }
+  .flip .fi { position: relative; width: 100%; height: 100%; min-height: 150px; transition: transform .5s; transform-style: preserve-3d; }
+  .flip.on .fi { transform: rotateY(180deg); }
+  .flip .fr, .flip .bk { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--radius-lg); padding: 1rem 1.1rem; display: flex; flex-direction: column; justify-content: center; }
+  .flip .fr { background: var(--guinda); color: var(--white); }
+  .flip .fr b { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.2; }
+  .flip .fr small { font-family: var(--font-ui); font-size: .72rem; margin-top: .5rem; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: .08em; }
+  .flip .bk { background: var(--guinda-light); border: 1.5px solid var(--guinda-rule); transform: rotateY(180deg); font-size: .88rem; line-height: 1.5; color: var(--ink); }
+  .flip .bk em { color: var(--guinda-dark); font-size: .8rem; margin-top: .4rem; display: block; }
+
+  /* Sorteo de escenario y cronómetro */
+  .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.2rem 0; }
+  @media (max-width: 800px) { .sim-grid { grid-template-columns: 1fr; } }
+  .sim-box { background: var(--white); border: 1px solid var(--border-strong); border-radius: var(--radius-lg); padding: 1.1rem 1.3rem; box-shadow: var(--shadow-sm); }
+  .sim-box h4 { color: var(--guinda); margin-bottom: .6rem; }
+  .sim-out { background: var(--guinda-light); border: 1px dashed var(--guinda-rule); border-radius: var(--radius-md); padding: .9rem 1.1rem; margin-top: .8rem; font-size: .93rem; line-height: 1.6; min-height: 90px; }
+  .sim-out b { color: var(--guinda-dark); }
+  .sim-out .tag { display: inline-block; font-family: var(--font-ui); font-size: .72rem; font-weight: 600; background: var(--white); color: var(--guinda); border: 1px solid #D8A8BA; border-radius: 999px; padding: .05rem .6rem; margin: .15rem .25rem .15rem 0; }
+  .sim-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+  .sim-row select { font-family: var(--font-ui); font-size: .85rem; padding: .5rem .7rem; border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); background: var(--white); }
+  .role-out { list-style: none; padding: 0; margin: 0; }
+  .role-out li { display: flex; gap: .7rem; align-items: flex-start; padding: .45rem 0; border-bottom: 1px solid #E8CFD9; margin: 0; }
+  .role-out li:last-child { border-bottom: none; }
+  .role-out .who { flex-shrink: 0; font-family: var(--font-ui); font-size: .72rem; font-weight: 700; color: var(--white); background: var(--guinda); border-radius: 999px; padding: .15rem .7rem; margin-top: .15rem; }
+  .clock { font-family: var(--font-mono); font-size: 3rem; font-weight: 700; color: var(--guinda); text-align: center; background: var(--guinda-light); border: 1px solid #D8A8BA; border-radius: var(--radius-md); padding: .4rem; letter-spacing: .05em; }
+  .clock.end { background: var(--guinda); color: var(--white); animation: parpadeo 1s steps(2) infinite; }
+  @keyframes parpadeo { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { .clock.end { animation: none; } .flip .fi { transition: none; } }
+
+  /* Constructor del manual */
+  .builder { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.2rem 0; }
+  @media (max-width: 800px) { .builder { grid-template-columns: 1fr; } }
+  .builder pre { background: var(--white); border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 1rem 1.1rem; font-family: var(--font-mono); font-size: .76rem; line-height: 1.55; white-space: pre-wrap; max-height: 420px; overflow: auto; margin: 0; -webkit-user-select: text; user-select: text; }
+
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .rubric td:first-child { font-weight: 600; }
+
+  .biblio-list { list-style: none; padding: 0; }
+  .biblio-list li { padding: .6rem 0 .6rem 1.6rem; border-bottom: 1px solid var(--border); font-size: .92rem; position: relative; line-height: 1.6; word-break: break-word; }
+  .biblio-list li::before { content: "•"; position: absolute; left: .3rem; color: var(--guinda); font-weight: 700; }
+  .biblio-list li:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-wrap"><img src="imagen1.png" alt="Instituto de Educación Digital del Estado de Puebla"></div>
+  <div class="header-text">
+    <span class="inst-name">Instituto de Educación Digital del Estado de Puebla</span>
+    <span class="doc-title">Licenciatura en Sistemas Computacionales · Material de clase</span>
+  </div>
+</header>
+
+<div class="class-hero">
+  <span class="class-label">Unidad 3 · Colaboración y Comunicación en Entornos Digitales</span>
+  <h1>Trabajar juntos a distancia: colabora y comunícate en el mundo digital</h1>
+  <span class="class-subtitle">Hoy aprenderás a convertir un grupo de personas conectadas por internet en un verdadero equipo: con las herramientas de Google, con redes sociales usadas con criterio y con reglas claras de trabajo.</span>
+  <div class="meta-row">
+    <div class="meta-item">Programa educativo<span>Lic. en Sistemas Computacionales</span></div>
+    <div class="meta-item">Asignatura<span>Desarrollo de Habilidades Digitales</span></div>
+    <div class="meta-item">Unidad y tema<span>3. Colaboración y Comunicación en Entornos Digitales</span></div>
+    <div class="meta-item">Fecha<span>Domingo 11 de octubre de 2026</span></div>
+    <div class="meta-item">Duración<span>3 horas (sesión conducida)</span></div>
+  </div>
+</div>
+
+<div class="page-wrapper">
+
+  <section class="section">
+    <h2 class="section-title">Competencias a desarrollar</h2>
+    <div class="competency-card"><span class="comp-num">01</span><span class="comp-text"><strong>Explicar</strong> qué es la colaboración digital y distinguir la comunicación sincrónica de la asincrónica.</span></div>
+    <div class="competency-card"><span class="comp-num">02</span><span class="comp-text"><strong>Emplear</strong> las herramientas de Google (Drive, Docs, Sheets, Slides, Forms, Meet y Calendar) de acuerdo con la tarea que se necesita resolver.</span></div>
+    <div class="competency-card"><span class="comp-num">03</span><span class="comp-text"><strong>Utilizar</strong> las redes sociales como medios de comunicación responsables y adecuados a un propósito académico o profesional.</span></div>
+    <div class="competency-card"><span class="comp-num">04</span><span class="comp-text"><strong>Diseñar</strong> procedimientos para la colaboración efectiva en equipos virtuales y documentarlos en un manual.</span></div>
+  </section>
+
+  <img src="imagen2.png" alt="Mixtle, mascota del curso" class="mascota-flotante">
+
+  <section class="section">
+    <h2 class="section-title">Ruta de la sesión</h2>
+    <p>La clase se organiza en tres momentos. Cada uno incluye actividades interactivas: haz clic, responde y practica directamente en esta página.</p>
+    <div class="agenda-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="agenda">
+      <div class="ag"><span class="ag-t">Inicio</span><span class="ag-m">40 <small>min</small></span><p>Análisis de un flujo de trabajo colaborativo y de los tipos de comunicación.</p></div>
+      <div class="ag"><span class="ag-t">Desarrollo</span><span class="ag-m">100 <small>min</small></span><p>Herramientas de Google, redes sociales y simulación por equipos: configurar un espacio de trabajo y documentar sus procedimientos.</p></div>
+      <div class="ag"><span class="ag-t">Cierre</span><span class="ag-m">40 <small>min</small></span><p>Asesoría síncrona en Google Meet, retroalimentación entre pares y autoevaluación.</p></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ INICIO ═══════════ -->
+  <section class="section">
+    <span class="mini-badge">Inicio</span>
+    <h2 class="section-title">Colaborar no es solo "compartir un archivo"</h2>
+    <p>La <strong>colaboración digital</strong> ocurre cuando varias personas, desde lugares distintos, construyen juntas un mismo resultado apoyándose en herramientas en línea. No basta con enviarse documentos por correo: hace falta coordinar tiempos, responsabilidades y versiones.</p>
+
+    <div class="concept-box">
+      <span class="concept-title">Analogía</span>
+      <p>Un equipo virtual funciona como una <strong>orquesta cuyos músicos tocan desde ciudades distintas</strong>. Todos necesitan la misma partitura (el documento compartido), un director que marque el ritmo (el calendario y las reuniones) y reglas para no tocar encima de los demás (los permisos y los acuerdos de comunicación). Sin eso, hay ruido; con eso, hay música.</p>
+    </div>
+
+    <div class="mixtle-say">
+      <img src="imagen1.png" alt="Mixtle">
+      <div class="bubble"><p>"Reto de arranque: antes de ver cualquier herramienta, ¿sabes en qué momento conviene hablar en vivo y en cuál conviene dejar un mensaje? Clasifica estos seis casos."</p></div>
+    </div>
+
+    <h3>Comunicación sincrónica o asincrónica</h3>
+    <p class="text-muted">Sincrónica: todos coinciden en el mismo momento. Asincrónica: cada quien responde cuando puede.</p>
+    <div class="quiz" id="quizSync"></div>
+
+    <h3 style="margin-top:2rem;">Caso: el flujo de trabajo del Equipo Nova</h3>
+    <p>El Equipo Nova prepara la Feria Digital de su carrera. Observa cómo viaja un documento por el equipo, como el <strong>testigo en una carrera de relevos</strong>: si alguien lo suelta, todo el equipo pierde tiempo. Haz clic en cada etapa.</p>
+    <div class="stepper" id="stepper"></div>
+    <div class="step-progress" aria-hidden="true"><i id="stepBar"></i></div>
+    <div class="step-panel" id="stepPanel" aria-live="polite"></div>
+  </section>
+
+  <!-- ═══════════ 3.1 HERRAMIENTAS DE GOOGLE ═══════════ -->
+  <section class="section">
+    <span class="mini-badge">Desarrollo · Tema 3.1</span>
+    <h2 class="section-title">3.1 Herramientas de Google</h2>
+    <p>Con una sola cuenta de Google tienes acceso a un conjunto de herramientas conectadas entre sí. Piensa en ellas como una <strong>oficina completa en la nube</strong>: cada herramienta es un área distinta, pero todas comparten la misma puerta de entrada.</p>
+
+    <h3>Mapa interactivo: la oficina de Google</h3>
+    <p class="text-muted">Haz clic en cada herramienta para conocer su analogía, su uso y un consejo práctico.</p>
+    <div class="map-wrap">
+      <svg id="toolMap" viewBox="0 0 560 400" role="group" aria-label="Mapa de herramientas de Google"></svg>
+      <div class="tool-panel" id="toolPanel" aria-live="polite"></div>
+    </div>
+
+    <h3 style="margin-top:2rem;">Permisos: ¿quién puede hacer qué?</h3>
+    <p>Compartir bien es tan importante como compartir rápido. Antes de enviar un enlace, decide el <strong>permiso mínimo necesario</strong>: el mismo principio de protección que revisamos en la unidad de seguridad.</p>
+    <div class="callout note"><p><strong>Analogía:</strong> los permisos son como las llaves de un edificio. El lector tiene una llave de visitante; el comentador, una de invitado que puede dejar recados; el editor, una llave de inquilino; y el propietario, la llave maestra.</p></div>
+
+    <div class="role-row" id="roleRow" role="group" aria-label="Elige un rol"></div>
+    <div class="tbl-scroll"><table class="perm-table">
+      <thead><tr><th>Acción</th><th>Lector</th><th>Comentador</th><th>Editor</th><th>Propietario</th></tr></thead>
+      <tbody id="permBody"></tbody>
+    </table></div>
+    <p class="perm-note">El círculo punteado indica que depende de la configuración que haya definido el propietario del archivo.</p>
+
+    <h4 style="margin-top:1.5rem;">Elige el permiso correcto</h4>
+    <div class="quiz" id="quizPerm"></div>
+
+    <h3 style="margin-top:2rem;">Práctica guiada en Google Docs</h3>
+    <p>Abre tu cuenta de Google en otra pestaña y sigue los pasos. Marca cada uno al terminarlo: lo que practiques hoy será la base de tu manual.</p>
+    <div class="prog-wrap"><div class="prog-bar"><i id="progBar"></i></div><div class="prog-text" id="progText">0 de 6 pasos completados</div></div>
+    <ul class="task-list" id="taskList"></ul>
+
+    <h3 style="margin-top:2rem;">Reuniones efectivas en Google Meet</h3>
+    <div class="tabs" id="meetTabs" role="tablist"></div>
+    <div id="meetPanes"></div>
+  </section>
+
+  <!-- ═══════════ 3.2 REDES SOCIALES ═══════════ -->
+  <section class="section">
+    <span class="mini-badge">Desarrollo · Tema 3.2</span>
+    <h2 class="section-title">3.2 Redes sociales</h2>
+    <p>Las redes sociales no son solo entretenimiento: también son canales para informar, coordinar y construir una presencia profesional. Funcionan como una <strong>plaza pública con megáfono</strong>: llegas a mucha gente, pero todo lo que dices queda a la vista de todos.</p>
+
+    <h3>¿Qué red para qué propósito?</h3>
+    <p class="text-muted">Los medidores son orientativos: ayudan a comparar el estilo de cada red, no son cifras exactas.</p>
+    <div class="net-grid" id="netGrid"></div>
+
+    <h4>Pon a prueba tu criterio</h4>
+    <div class="quiz" id="quizRed"></div>
+
+    <h3 style="margin-top:2rem;">Netiqueta: reglas de convivencia en línea</h3>
+    <p class="text-muted">Haz clic en cada tarjeta para voltearla.</p>
+    <div class="flip-grid" id="flipGrid"></div>
+
+    <h3 style="margin-top:2rem;">Semáforo de publicación</h3>
+    <div class="mixtle-say">
+      <img src="imagen1.png" alt="Mixtle">
+      <div class="bubble"><p>"Recuerda el cemento fresco: una publicación deja huella. Decide si cada caso se publica, se revisa antes o no se publica."</p></div>
+    </div>
+    <div class="quiz" id="quizSemaforo"></div>
+  </section>
+
+  <!-- ═══════════ SIMULACIÓN POR EQUIPOS ═══════════ -->
+  <section class="section">
+    <span class="mini-badge">Desarrollo · Simulación por equipos</span>
+    <h2 class="section-title">Misión de equipo: configura tu espacio de trabajo</h2>
+    <p>Ahora te toca aplicarlo. Cada equipo sortea un escenario y los roles de sus integrantes; después configura su espacio de trabajo colaborativo (carpeta en Drive, documento compartido, calendario y reunión en Meet) y documenta cómo trabajará.</p>
+
+    <div class="sim-grid">
+      <div class="sim-box">
+        <h4>1. Sorteo de escenario</h4>
+        <button class="btn primary" id="btnEsc" type="button">Sortear escenario</button>
+        <div class="sim-out" id="outEsc">Presiona el botón para conocer la misión de tu equipo.</div>
+      </div>
+      <div class="sim-box">
+        <h4>2. Sorteo de roles</h4>
+        <div class="sim-row">
+          <label for="selInt" style="font-family:var(--font-ui); font-size:.85rem;">Integrantes:</label>
+          <select id="selInt"><option>3</option><option selected>4</option><option>5</option></select>
+          <button class="btn primary" id="btnRol" type="button">Sortear roles</button>
+        </div>
+        <div class="sim-out" id="outRol">Elige cuántos son en tu equipo y sortea los roles.</div>
+      </div>
+    </div>
+
+    <div class="sim-box">
+      <h4>3. Cronómetro de la actividad</h4>
+      <div class="clock" id="clock" aria-live="off">15:00</div>
+      <div class="sim-row" style="justify-content:center; margin-top:.8rem;">
+        <button class="btn" data-min="10" type="button">10 min</button>
+        <button class="btn" data-min="15" type="button">15 min</button>
+        <button class="btn" data-min="20" type="button">20 min</button>
+        <button class="btn primary" id="btnClock" type="button">Iniciar</button>
+        <button class="btn" id="btnClockReset" type="button">Reiniciar</button>
+      </div>
+    </div>
+
+    <h3 style="margin-top:2rem;">Constructor del esqueleto de tu manual</h3>
+    <p>Elige las secciones que tendrá el manual de procedimientos de tu equipo. Se genera un esqueleto con preguntas guía que puedes copiar y pegar en tu documento de Google Docs.</p>
+    <div class="builder">
+      <div>
+        <ul class="task-list" id="secList"></ul>
+      </div>
+      <div>
+        <pre id="skeleton" aria-live="polite"></pre>
+        <div style="margin-top:.7rem; display:flex; gap:.6rem; align-items:center; flex-wrap:wrap;">
+          <button class="btn primary" id="btnCopy" type="button">Copiar esqueleto</button>
+          <span class="text-muted" id="copyMsg"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PRODUCTO ═══════════ -->
+  <section class="section">
+    <h2 class="section-title">Producto de aprendizaje de la unidad</h2>
+    <p><strong>Manual de procedimientos para la colaboración efectiva en línea:</strong> una guía para trabajar en equipo virtual utilizando herramientas de Google. Representa el <strong>20 %</strong> de la calificación del curso.</p>
+
+    <div class="tbl-scroll"><table class="rubric">
+      <thead><tr><th>Se revisará…</th><th>¿Qué se observa?</th></tr></thead>
+      <tbody>
+        <tr><td>Claridad</td><td>Los procedimientos se entienden y pueden seguirse paso a paso por alguien que no estuvo en el equipo.</td></tr>
+        <tr><td>Uso de las herramientas</td><td>Se evidencia con capturas el uso de Drive, Docs, Calendar y Meet, con permisos asignados con criterio.</td></tr>
+        <tr><td>Roles y comunicación</td><td>Define quién hace qué, por qué canal se comunican y en cuánto tiempo se responde.</td></tr>
+        <tr><td>Seguridad y buenas prácticas</td><td>Considera permisos mínimos, verificación en dos pasos y respaldo de archivos, conforme a lo visto en la Unidad 2.</td></tr>
+        <tr><td>Presentación</td><td>Ortografía, orden y formato cuidados.</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="card">
+      <span class="card-title">Actividad independiente</span>
+      <p style="margin-bottom:0;">Con tu equipo, termina el manual a partir del esqueleto generado en clase. Incluye capturas de pantalla (sin datos personales ni contraseñas) que muestren la carpeta compartida, los permisos asignados, el calendario del equipo y una reunión programada en Meet. Súbelo a la plataforma antes de la siguiente sesión.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ CIERRE ═══════════ -->
+  <section class="section">
+    <span class="mini-badge">Cierre</span>
+    <h2 class="section-title">Retroalimentación entre pares y autoevaluación</h2>
+    <p>En la asesoría síncrona por Google Meet, cada equipo comparte su esqueleto y recibe comentarios de otro equipo. Usen esta ficha para que la retroalimentación sea útil y respetuosa:</p>
+    <div class="grid-2">
+      <div class="card"><span class="card-title">Una fortaleza</span><p class="text-sm" style="margin-bottom:0;">¿Qué parte del manual está mejor lograda y por qué?</p></div>
+      <div class="card"><span class="card-title">Una duda</span><p class="text-sm" style="margin-bottom:0;">¿Qué procedimiento no quedó claro o podría interpretarse de dos maneras?</p></div>
+      <div class="card"><span class="card-title">Una sugerencia concreta</span><p class="text-sm" style="margin-bottom:0;">¿Qué cambio específico mejoraría el documento? (Evita decir solo "está mal" o "está bien".)</p></div>
+      <div class="card"><span class="card-title">Una pregunta de seguridad</span><p class="text-sm" style="margin-bottom:0;">¿Los permisos y accesos descritos protegen la información del equipo?</p></div>
+    </div>
+
+    <h3 style="margin-top:1.8rem;">Autoevaluación rápida</h3>
+    <p class="text-muted">Esta práctica es solo para reforzar lo aprendido; no tiene valor en tu calificación.</p>
+    <div class="quiz" id="quizFinal"></div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Conclusión</h2>
+    <p>Colaborar a distancia no depende de la herramienta, sino de <strong>cómo la usamos en equipo</strong>. Las herramientas de Google permiten trabajar en un mismo documento, coordinar fechas y reunirse sin importar el lugar; las redes sociales amplían el alcance de lo que comunicamos, siempre que cuidemos la reputación y el respeto hacia los demás; y un manual de procedimientos convierte los buenos propósitos en acuerdos claros. Con estas bases, en la siguiente unidad podrás crear contenido digital propio, apoyarte en la inteligencia artificial y respetar los derechos de autor.</p>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Referencias bibliográficas</h2>
+    <ul class="biblio-list">
+      <li>Gozálvez, V. y Cortijo, G. (2023). Desarrollo Humano y Redes Sociales en Sociedades Digitales. <em>Sophia, Colección de Filosofía de la Educación</em>, (34), 41–64. <a href="https://doi.org/10.17163/soph.n34.2023.01" target="_blank" rel="noopener">https://doi.org/10.17163/soph.n34.2023.01</a></li>
+      <li>Marín, V. y Cabero, J. (2019). Las redes sociales en educación: desde la innovación a la investigación educativa. <em>RIED. Revista Iberoamericana de Educación a Distancia</em>, 22(2), 25-30.</li>
+      <li>Ruíz, U. (2022). Las herramientas Google para la enseñanza en el siglo XXI. <em>Revista RedCA</em>, 5(13), 78-102. <a href="https://revistaredca.uaemex.mx/article/view/18684/13861" target="_blank" rel="noopener">https://revistaredca.uaemex.mx/article/view/18684/13861</a></li>
+    </ul>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <span>Instituto de Educación Digital del Estado de Puebla — Desarrollo de Habilidades Digitales</span>
+  <span><strong>Mtro. José Armando Vera Rodríguez</strong></span>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+
+  /* ═══ Motor de cuestionarios interactivos ═══════════════════ */
+  function crearQuiz(id, items, opts) {
+    opts = opts || {};
+    var cont = $(id), resp = 0, aciertos = 0;
+    var head = el('div', 'quiz-head');
+    var score = el('span', 'quiz-score', 'Aciertos: 0 / ' + items.length);
+    head.appendChild(score);
+    var grid = el('div', 'quiz-grid' + (opts.una ? ' one' : ''));
+    var fin = el('div', 'quiz-final');
+    var finTxt = el('span', '', '');
+    var reint = el('button', 'btn', 'Intentar de nuevo'); reint.type = 'button';
+    fin.appendChild(finTxt); fin.appendChild(reint);
+    cont.appendChild(head); cont.appendChild(grid); cont.appendChild(fin);
+
+    function pintar() {
+      grid.innerHTML = ''; resp = 0; aciertos = 0;
+      score.textContent = 'Aciertos: 0 / ' + items.length; fin.classList.remove('show');
+      items.forEach(function (it, i) {
+        var card = el('div', 'qcard');
+        card.appendChild(el('div', 'qtxt', (opts.numerar ? '<b>' + (i + 1) + '.</b> ' : '') + it.t));
+        var ops = el('div', 'qopts');
+        var why = el('div', 'qwhy', '');
+        it.o.forEach(function (txt, k) {
+          var b = el('button', 'qopt', txt); b.type = 'button';
+          b.addEventListener('click', function () {
+            var botones = ops.querySelectorAll('button');
+            var ok = (k === it.c);
+            for (var j = 0; j < botones.length; j++) botones[j].disabled = true;
+            b.classList.add(ok ? 'correct' : 'wrong');
+            if (!ok) botones[it.c].classList.add('reveal');
+            why.innerHTML = '<b>' + (ok ? 'Correcto. ' : 'Casi. ') + '</b>' + it.w; why.classList.add('show');
+            resp++; if (ok) aciertos++;
+            score.textContent = 'Aciertos: ' + aciertos + ' / ' + items.length;
+            if (resp === items.length) {
+              var msg = aciertos === items.length ? 'Excelente: respondiste todo correctamente.' : (aciertos >= Math.ceil(items.length * 0.6) ? 'Buen resultado. Repasa los casos que fallaste.' : 'Vale la pena repasar el tema y volver a intentarlo.');
+              finTxt.textContent = 'Resultado: ' + aciertos + ' de ' + items.length + '. ' + msg;
+              fin.classList.add('show');
+            }
+          });
+          ops.appendChild(b);
+        });
+        card.appendChild(ops); card.appendChild(why); grid.appendChild(card);
+      });
+    }
+    reint.addEventListener('click', pintar);
+    pintar();
+  }
+
+  crearQuiz('quizSync', [
+    { t: 'Videollamada en Google Meet con el equipo a las 5:00 p. m.', o: ['Sincrónica', 'Asincrónica'], c: 0, w: 'Todos coinciden en el mismo momento.' },
+    { t: 'Comentario dejado en un párrafo de Google Docs.', o: ['Sincrónica', 'Asincrónica'], c: 1, w: 'Quien lo recibe lo atiende cuando abre el documento.' },
+    { t: 'Chat en vivo durante una clase virtual.', o: ['Sincrónica', 'Asincrónica'], c: 0, w: 'La conversación ocurre en tiempo real.' },
+    { t: 'Correo electrónico con las tareas pendientes de la semana.', o: ['Sincrónica', 'Asincrónica'], c: 1, w: 'El correo no exige respuesta inmediata.' },
+    { t: 'Foro de discusión en la plataforma del curso.', o: ['Sincrónica', 'Asincrónica'], c: 1, w: 'Cada participante aporta en el momento que le conviene.' },
+    { t: 'Varias personas editando al mismo tiempo la misma hoja de cálculo.', o: ['Sincrónica', 'Asincrónica'], c: 0, w: 'Es colaboración en tiempo real: los cambios se ven al instante.' }
+  ], { numerar: true });
+
+  /* ═══ Flujo del Equipo Nova ══════════════════════════════════ */
+  var PASOS = [
+    { n: 'Planear', h: 'Calendar y Meet', q: 'El equipo fija fecha de entrega y se reúne para repartir tareas y definir quién coordina.', r: 'Sin un plan común, cada persona avanza por su lado y las partes no encajan.' },
+    { n: 'Redactar', h: 'Docs y Drive', q: 'Cada integrante escribe su sección en el mismo documento, guardado en una carpeta compartida.', r: 'Si se envían copias por correo, aparecen versiones duplicadas y se pierde trabajo.' },
+    { n: 'Revisar', h: 'Comentarios y sugerencias', q: 'Se mencionan personas con @ para asignar pendientes y se proponen cambios sin borrar el texto original.', r: 'Sin revisión, los errores y las contradicciones llegan a la entrega final.' },
+    { n: 'Aprobar', h: 'Permisos y versiones', q: 'El coordinador acepta o rechaza sugerencias, resuelve comentarios y revisa el historial de versiones.', r: 'Si todos editan todo sin control, es difícil saber qué es lo definitivo.' },
+    { n: 'Difundir', h: 'Slides y redes sociales', q: 'Se prepara la presentación y se publica un aviso claro en los canales del equipo y de la comunidad.', r: 'Un mensaje confuso o impulsivo daña la reputación del proyecto.' }
+  ];
+  var stepper = $('stepper'), panel = $('stepPanel');
+  function verPaso(i) {
+    var btns = stepper.querySelectorAll('button');
+    for (var j = 0; j < btns.length; j++) btns[j].classList.toggle('on', j === i);
+    var p = PASOS[i];
+    panel.innerHTML = '<b style="font-family:var(--font-ui); color:var(--guinda);">Etapa ' + (i + 1) + ': ' + p.n + '</b>' +
+      '<div class="sp-grid"><div class="sp-box"><b>Herramienta</b>' + p.h + '</div><div class="sp-box"><b>Qué ocurre</b>' + p.q + '</div><div class="sp-box"><b>Si falla…</b>' + p.r + '</div></div>';
+    $('stepBar').style.width = ((i + 1) / PASOS.length * 100) + '%';
+  }
+  PASOS.forEach(function (p, i) {
+    var b = el('button', 'step-btn', '<span class="sn">Etapa ' + (i + 1) + '</span><span class="st">' + p.n + '</span>'); b.type = 'button';
+    b.addEventListener('click', function () { verPaso(i); });
+    stepper.appendChild(b);
+  });
+  verPaso(0);
+
+  /* ═══ Mapa de herramientas de Google ═════════════════════════ */
+  var ICONOS = {
+    drive: 'M3 6h6l2 2h10v11H3z',
+    docs: 'M6 3h9l4 4v14H6z M9 11h7 M9 14h7 M9 17h5',
+    sheets: 'M4 4h16v16H4z M4 10h16 M4 15h16 M10 4v16',
+    slides: 'M4 5h16v11H4z M12 16v4 M8 20h8',
+    forms: 'M5 4h14v16H5z M8 9l1.5 1.5L12 8 M13 10h4 M8 15h9',
+    meet: 'M3 7h12v10H3z M15 11l6-3v8l-6-3z',
+    calendar: 'M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4',
+    gmail: 'M3 6h18v12H3z M3 7l9 7 9-7'
+  };
+  var TOOLS = {
+    drive: { n: 'Drive', a: 'El archivero compartido de la oficina: todo en un solo lugar, con llave para quien tú decidas.', q: 'Almacena y organiza archivos y carpetas en la nube y controla quién puede verlos, comentarlos o editarlos.', u: 'Una carpeta del equipo con subcarpetas por unidad o por entregable.', t: 'Usa una regla común para nombrar archivos (fecha_tema_versión) y así encontrarlos fácilmente.' },
+    docs: { n: 'Docs', a: 'Una pizarra de redacción en la que todos escriben al mismo tiempo, cada quien con su color de cursor.', q: 'Procesador de texto en línea con coedición, comentarios, sugerencias e historial de versiones.', u: 'Redactar entre varias personas el manual de procedimientos.', t: 'Escribe @ y el nombre de alguien dentro de un comentario para asignarle una tarea.' },
+    sheets: { n: 'Sheets', a: 'Un libro de cuentas compartido que se recalcula solo cuando cualquiera cambia un número.', q: 'Hojas de cálculo en línea con fórmulas, gráficas y edición simultánea.', u: 'Calendario de entregas y seguimiento de tareas del equipo.', t: 'Protege los rangos importantes para evitar cambios accidentales.' },
+    slides: { n: 'Slides', a: 'Un rotafolio que varios dibujan a la vez antes de la exposición.', q: 'Presentaciones colaborativas con plantillas, comentarios y modo presentación.', u: 'Preparar la exposición final del equipo.', t: 'Define un diseño base antes de que cada integrante agregue su lámina.' },
+    forms: { n: 'Forms', a: 'Un buzón de sugerencias que ordena solo las respuestas que recibe.', q: 'Cuestionarios y encuestas cuyas respuestas se concentran automáticamente en una hoja de cálculo.', u: 'Inscripciones, encuestas de satisfacción y registro de asistencia.', t: 'Limita una respuesta por persona cuando necesites evitar duplicados.' },
+    meet: { n: 'Meet', a: 'La sala de juntas del equipo, disponible desde cualquier lugar con solo un enlace.', q: 'Videollamadas con pantalla compartida y chat; algunas funciones dependen del tipo de cuenta.', u: 'Reunión de arranque, asesorías síncronas y revisión entre pares.', t: 'Comparte la agenda antes de la llamada y designa a alguien que tome la minuta.' },
+    calendar: { n: 'Calendar', a: 'La agenda mural del equipo: todos ven cuándo están libres o tienen compromisos.', q: 'Calendario compartido con invitaciones, recordatorios y enlace de videollamada.', u: 'Fijar fechas de reuniones y de entregas.', t: 'Crea un calendario del equipo y compártelo para que todos vean las mismas fechas.' },
+    gmail: { n: 'Gmail', a: 'La oficina de correos formal del equipo: deja constancia por escrito.', q: 'Correo electrónico con etiquetas, filtros y enlaces a archivos de Drive.', u: 'Comunicaciones formales con docentes o instituciones.', t: 'Envía enlaces de Drive en lugar de archivos adjuntos para no duplicar versiones.' }
+  };
+  var svg = $('toolMap'), orden = ['drive', 'docs', 'sheets', 'slides', 'forms', 'meet', 'calendar', 'gmail'];
+  var cx = 280, cy = 200, R = 140, html = '';
+  html += '<circle cx="' + cx + '" cy="' + cy + '" r="150" fill="none" stroke="#E2D8DA" stroke-dasharray="4 5"/>';
+  orden.forEach(function (k, i) {
+    var ang = (-90 + i * 45) * Math.PI / 180, x = cx + R * Math.cos(ang), y = cy + R * Math.sin(ang);
+    html += '<line x1="' + cx + '" y1="' + cy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#C85070" stroke-width="1.5" opacity=".5"/>';
+  });
+  html += '<circle cx="' + cx + '" cy="' + cy + '" r="52" fill="#490b58"/><text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#fff">Tu cuenta</text><text x="' + cx + '" y="' + (cy + 13) + '" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#fff">de Google</text>';
+  orden.forEach(function (k, i) {
+    var ang = (-90 + i * 45) * Math.PI / 180, x = cx + R * Math.cos(ang), y = cy + R * Math.sin(ang);
+    html += '<g class="nd" data-k="' + k + '" tabindex="0" role="button" aria-label="' + TOOLS[k].n + '" transform="translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')">' +
+      '<circle class="nd-bg" r="35"/>' +
+      '<svg x="-14" y="-18" width="28" height="28" viewBox="0 0 24 24"><path class="nd-ic" d="' + ICONOS[k] + '"/></svg>' +
+      '<text y="21">' + TOOLS[k].n + '</text></g>';
+  });
+  svg.innerHTML = html;
+  function verHerr(k) {
+    var nodos = svg.querySelectorAll('.nd');
+    for (var i = 0; i < nodos.length; i++) nodos[i].classList.toggle('on', nodos[i].getAttribute('data-k') === k);
+    var t = TOOLS[k];
+    $('toolPanel').innerHTML = '<h4>' + t.n + '</h4>' +
+      '<div class="tp-row"><b>Analogía</b><span>' + t.a + '</span></div>' +
+      '<div class="tp-row"><b>¿Qué es?</b><span>' + t.q + '</span></div>' +
+      '<div class="tp-row"><b>Úsala para</b><span>' + t.u + '</span></div>' +
+      '<div class="tp-row"><b>Consejo</b><span>' + t.t + '</span></div>';
+  }
+  svg.addEventListener('click', function (e) { var g = e.target.closest ? e.target.closest('.nd') : null; if (g) verHerr(g.getAttribute('data-k')); });
+  svg.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { var g = e.target.closest('.nd'); if (g) { e.preventDefault(); verHerr(g.getAttribute('data-k')); } } });
+  verHerr('docs');
+
+  /* ═══ Matriz de permisos ═════════════════════════════════════ */
+  var ROLES = ['Lector', 'Comentador', 'Editor', 'Propietario'];
+  var ACC = [
+    ['Ver el archivo', ['y', 'y', 'y', 'y']],
+    ['Dejar comentarios', ['n', 'y', 'y', 'y']],
+    ['Editar el contenido', ['n', 'n', 'y', 'y']],
+    ['Compartir y cambiar permisos', ['n', 'n', 'o', 'y']],
+    ['Eliminar o transferir la propiedad', ['n', 'n', 'n', 'y']]
+  ];
+  var roleRow = $('roleRow'), permBody = $('permBody');
+  ACC.forEach(function (a) {
+    var tr = el('tr', '', '<td>' + a[0] + '</td>' + a[1].map(function (v) {
+      return '<td><span class="pm ' + (v === 'y' ? 'yes' : v === 'o' ? 'opt' : 'no') + '">' + (v === 'y' ? 'Sí' : v === 'o' ? '?' : '—') + '</span></td>';
+    }).join(''));
+    permBody.appendChild(tr);
+  });
+  function verRol(i) {
+    var bs = roleRow.querySelectorAll('button');
+    for (var j = 0; j < bs.length; j++) bs[j].classList.toggle('on', j === i);
+    var filas = permBody.querySelectorAll('tr');
+    filas.forEach(function (tr) {
+      var tds = tr.querySelectorAll('td');
+      for (var c = 1; c < tds.length; c++) tds[c].style.background = (c - 1 === i) ? '#F5E8EE' : '';
+    });
+    var ths = document.querySelectorAll('.perm-table thead th');
+    for (var h = 1; h < ths.length; h++) ths[h].style.outline = (h - 1 === i) ? '3px solid #C85070' : 'none';
+  }
+  ROLES.forEach(function (r, i) {
+    var b = el('button', 'role-btn', r); b.type = 'button'; b.addEventListener('click', function () { verRol(i); }); roleRow.appendChild(b);
+  });
+  verRol(2);
+
+  crearQuiz('quizPerm', [
+    { t: 'Tu profesor revisará tu ensayo en Docs y quiere dejar observaciones, pero sin modificar tu texto. ¿Qué permiso le das?', o: ['Lector', 'Comentador', 'Editor'], c: 1, w: 'El comentador puede dejar observaciones sin alterar el contenido.' },
+    { t: 'Compartirás el cartel final con toda la escuela y nadie debe poder modificarlo. ¿Qué permiso conviene?', o: ['Lector', 'Comentador', 'Editor'], c: 0, w: 'Con permiso de lector solo pueden ver. Aplica el principio del permiso mínimo necesario.' },
+    { t: 'Tu compañera debe completar su sección del manual dentro del mismo documento. ¿Qué permiso necesita?', o: ['Lector', 'Comentador', 'Editor'], c: 2, w: 'Para escribir dentro del documento necesita ser editora.' }
+  ], { una: true, numerar: true });
+
+  /* ═══ Práctica guiada en Google Docs ═════════════════════════ */
+  var PRAC = [
+    'Crea una carpeta en Drive con el nombre del equipo y dentro un documento llamado "Manual de colaboración — Equipo (nombre)".',
+    'Comparte el documento con tus compañeros como Editores y con tu asesor como Comentador. Verifica que no esté abierto a "cualquier persona con el enlace".',
+    'Divide el documento en secciones con títulos y reparte una sección a cada integrante.',
+    'Deja un comentario en la sección de un compañero y menciónalo con @ para asignarle una tarea.',
+    'Cambia a modo "Sugerencias", propón una mejora en el texto de otro integrante y acéptala o recházala.',
+    'Abre el historial de versiones, localiza un cambio anterior y observa quién lo hizo y cuándo.'
+  ];
+  var lista = $('taskList'), hechos = 0;
+  PRAC.forEach(function (t, i) {
+    var li = el('li', '');
+    var lab = el('label', '');
+    var inp = el('input'); inp.type = 'checkbox';
+    var box = el('span', 'box', 'OK');
+    var tx = el('span', '', '<b>Paso ' + (i + 1) + '.</b> ' + t);
+    lab.appendChild(inp); lab.appendChild(box); lab.appendChild(tx); li.appendChild(lab); lista.appendChild(li);
+    inp.addEventListener('change', function () {
+      lab.classList.toggle('done', inp.checked);
+      hechos = lista.querySelectorAll('input:checked').length;
+      $('progBar').style.width = (hechos / PRAC.length * 100) + '%';
+      $('progText').textContent = hechos + ' de ' + PRAC.length + ' pasos completados' + (hechos === PRAC.length ? '. Excelente: ya dominas lo esencial de Docs.' : '');
+    });
+  });
+
+  /* ═══ Pestañas de Meet ═══════════════════════════════════════ */
+  var MEET = {
+    'Antes': ['Define el objetivo de la reunión en una sola frase.', 'Crea el evento en Calendar con el enlace de Meet e invita a todo el equipo.', 'Comparte la agenda y los documentos necesarios con anticipación.', 'Prueba tu cámara, micrófono y conexión unos minutos antes.'],
+    'Durante': ['Inicia puntual y recuerda los acuerdos de comunicación del equipo.', 'Designa a alguien que tome la minuta y a otra persona que modere los turnos.', 'Mantén el micrófono apagado cuando no hables y usa el chat para dudas breves.', 'Comparte pantalla solo con lo necesario y cierra pestañas con información personal.'],
+    'Después': ['Envía la minuta con acuerdos, responsables y fechas límite.', 'Registra las tareas pendientes en el documento o la hoja de seguimiento.', 'Programa la siguiente reunión si hace falta.', 'Verifica que quien entró como invitado no conserve accesos que ya no necesita.']
+  };
+  var tabs = $('meetTabs'), panes = $('meetPanes');
+  Object.keys(MEET).forEach(function (k, i) {
+    var b = el('button', 'tab-btn' + (i === 0 ? ' on' : ''), k); b.type = 'button'; b.setAttribute('role', 'tab');
+    var p = el('div', 'tab-pane' + (i === 0 ? ' on' : ''), '<ul>' + MEET[k].map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>');
+    b.addEventListener('click', function () {
+      tabs.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
+      panes.querySelectorAll('.tab-pane').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); p.classList.add('on');
+    });
+    tabs.appendChild(b); panes.appendChild(p);
+  });
+
+  /* ═══ Redes sociales ═════════════════════════════════════════ */
+  var REDES = [
+    { n: 'LinkedIn', f: 'Perfil profesional', d: 'Presenta tu trayectoria, proyectos y habilidades ante empresas y colegas.', m: [5, 2, 2] },
+    { n: 'Instagram', f: 'Contenido visual', d: 'Ideal para imágenes, carteles, historias y videos cortos de un proyecto o evento.', m: [2, 5, 3] },
+    { n: 'X (microblog)', f: 'Avisos breves', d: 'Mensajes cortos y rápidos para compartir noticias y seguir conversaciones públicas.', m: [3, 2, 5] },
+    { n: 'Facebook', f: 'Comunidades y grupos', d: 'Grupos y páginas para organizar comunidades, eventos y avisos a un público amplio.', m: [3, 3, 3] },
+    { n: 'YouTube', f: 'Video y tutoriales', d: 'Videos de mayor duración: tutoriales, conferencias y demostraciones que se consultan después.', m: [3, 5, 1] },
+    { n: 'WhatsApp / Telegram', f: 'Mensajería de grupo', d: 'Coordinación diaria del equipo, avisos urgentes y comunicación directa.', m: [2, 2, 5] }
+  ];
+  var netGrid = $('netGrid');
+  function medidor(lbl, v) {
+    var barras = ''; for (var i = 1; i <= 5; i++) barras += '<i class="' + (i <= v ? 'f' : '') + '"></i>';
+    return '<div class="meter"><span>' + lbl + '</span><span class="mbar">' + barras + '</span></div>';
+  }
+  REDES.forEach(function (r) {
+    netGrid.appendChild(el('div', 'net', '<h4>' + r.n + '</h4><span class="net-for">' + r.f + '</span><p>' + r.d + '</p>' +
+      medidor('Formalidad', r.m[0]) + medidor('Visual', r.m[1]) + medidor('Inmediatez', r.m[2])));
+  });
+
+  crearQuiz('quizRed', [
+    { t: 'Quieres que reclutadores conozcan tu perfil profesional y tus proyectos de Sistemas Computacionales.', o: ['LinkedIn', 'WhatsApp / Telegram', 'YouTube', 'X (microblog)'], c: 0, w: 'LinkedIn está orientada al perfil profesional y a la red de contactos laborales.' },
+    { t: 'Necesitas avisar de inmediato a tu equipo que la reunión se adelantó 30 minutos.', o: ['LinkedIn', 'WhatsApp / Telegram', 'YouTube', 'Instagram'], c: 1, w: 'La mensajería de grupo es la vía más inmediata y directa para el equipo.' },
+    { t: 'Quieres compartir con alumnos de otros campus un tutorial en video de varios minutos que puedan consultar cuando quieran.', o: ['X (microblog)', 'WhatsApp / Telegram', 'YouTube', 'LinkedIn'], c: 2, w: 'YouTube permite publicar videos de mayor duración y consultarlos después.' }
+  ], { una: true, numerar: true });
+
+  var NET = [
+    ['Piensa antes de publicar', 'Regla 1', 'Lo que publicas puede permanecer en línea mucho tiempo, incluso si lo borras.', 'Recuerda la analogía del cemento fresco (Unidad 2).'],
+    ['Respeta la privacidad ajena', 'Regla 2', 'Pide permiso antes de etiquetar o publicar fotografías, datos o capturas de otras personas.', 'La reputación digital también es de los demás.'],
+    ['Adapta el tono al canal', 'Regla 3', 'Formal en un correo académico; cercano, pero respetuoso, en un chat. Evita escribir en mayúsculas sostenidas.', 'El tono comunica tanto como el contenido.'],
+    ['Reconoce las fuentes', 'Regla 4', 'Cuando compartas imágenes, ideas o textos de otras personas, menciona a su autor.', 'Anticipa el tema de derechos de autor de la Unidad 4.'],
+    ['Responde con empatía y a tiempo', 'Regla 5', 'Acuerden en equipo en cuánto tiempo responderán y cómo expresarán desacuerdos sin atacar a nadie.', 'Un buen acuerdo evita muchos conflictos.'],
+    ['Verifica antes de compartir', 'Regla 6', 'Contrasta la información con fuentes confiables antes de reenviarla para no difundir desinformación.', 'Usa la lista del detective digital (Unidad 1).']
+  ];
+  var flipGrid = $('flipGrid');
+  NET.forEach(function (n) {
+    var b = el('button', 'flip', '<div class="fi"><div class="fr"><b>' + n[0] + '</b><small>' + n[1] + ' · clic para voltear</small></div><div class="bk">' + n[2] + '<em>' + n[3] + '</em></div></div>');
+    b.type = 'button';
+    b.addEventListener('click', function () { b.classList.toggle('on'); });
+    flipGrid.appendChild(b);
+  });
+
+  crearQuiz('quizSemaforo', [
+    { t: 'Fotografía del equipo al terminar el proyecto. Todos aceptaron salir en ella y la subes etiquetándolos.', o: ['Publicar', 'Revisar antes', 'No publicar'], c: 0, w: 'Hay consentimiento de las personas que aparecen y el contenido es positivo.' },
+    { t: 'Captura de pantalla de la calificación de un compañero para bromear en el grupo.', o: ['Publicar', 'Revisar antes', 'No publicar'], c: 2, w: 'Expone datos personales de otra persona sin su permiso y puede dañar su reputación.' },
+    { t: 'Un comentario molesto sobre un profesor, escrito justo después de recibir una mala calificación.', o: ['Publicar', 'Revisar antes', 'No publicar'], c: 1, w: 'Conviene esperar, reformular con respeto y canalizar la inconformidad por las vías formales.' },
+    { t: 'Aviso del proyecto con enlace a tu portafolio profesional, revisado y sin datos personales sensibles.', o: ['Publicar', 'Revisar antes', 'No publicar'], c: 0, w: 'Es información útil, revisada y que fortalece tu reputación profesional.' }
+  ], { una: true, numerar: true });
+
+  /* ═══ Simulación: escenario, roles y cronómetro ══════════════ */
+  var ESC = [
+    { n: 'Feria Digital de Proyectos', o: 'Organizar una feria virtual donde los equipos presenten sus proyectos del cuatrimestre.', e: ['Calendario de actividades', 'Cartel de difusión', 'Publicación de lanzamiento'], h: ['Calendar', 'Slides', 'Instagram'] },
+    { n: 'Campaña "Navega seguro"', o: 'Informar a estudiantes de primer cuatrimestre sobre buenas prácticas de ciberseguridad.', e: ['Guía breve en Docs', 'Tres publicaciones para redes', 'Formulario de registro de dudas'], h: ['Docs', 'Forms', 'Facebook'] },
+    { n: 'Club de estudio virtual', o: 'Coordinar sesiones semanales de repaso para las asignaturas del cuatrimestre.', e: ['Calendario de sesiones', 'Carpeta compartida de apuntes', 'Reglas del club'], h: ['Calendar', 'Drive', 'Meet'] },
+    { n: 'Torneo de programación en línea', o: 'Organizar un torneo con inscripciones, reglamento y transmisión de resultados.', e: ['Formulario de inscripción', 'Reglamento en Docs', 'Aviso en redes'], h: ['Forms', 'Docs', 'LinkedIn'] },
+    { n: 'Colecta de equipo de cómputo', o: 'Impulsar una campaña solidaria para reunir equipos usados para una escuela rural.', e: ['Comunicado oficial', 'Formulario de donantes', 'Seguimiento en hoja de cálculo'], h: ['Docs', 'Forms', 'Sheets'] }
+  ];
+  $('btnEsc').addEventListener('click', function () {
+    var e = ESC[Math.floor(Math.random() * ESC.length)];
+    $('outEsc').innerHTML = '<b>' + e.n + '</b><br>' + e.o + '<br><b>Entregables:</b> ' + e.e.join('; ') + '.<br><b>Herramientas sugeridas:</b> ' + e.h.map(function (x) { return '<span class="tag">' + x + '</span>'; }).join('');
+  });
+  var ROL = [
+    ['Coordinación', 'Mantiene el calendario, reparte tareas y da seguimiento (Calendar y Sheets).'],
+    ['Documentación', 'Cuida el documento principal, el orden de la carpeta y el historial de versiones (Docs y Drive).'],
+    ['Comunicación', 'Redacta avisos y gestiona los canales del equipo y las redes (mensajería y redes sociales).'],
+    ['Seguridad y respaldo', 'Revisa permisos, verificación en dos pasos y copias de seguridad (Drive).'],
+    ['Facilitación de reuniones', 'Prepara la agenda, modera los turnos y registra la minuta (Meet).']
+  ];
+  $('btnRol').addEventListener('click', function () {
+    var n = parseInt($('selInt').value, 10), r = ROL.slice();
+    for (var i = r.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = r[i]; r[i] = r[j]; r[j] = t; }
+    r = r.slice(0, n);
+    $('outRol').innerHTML = '<ul class="role-out">' + r.map(function (x, i) { return '<li><span class="who">Integrante ' + (i + 1) + '</span><span><b>' + x[0] + '.</b> ' + x[1] + '</span></li>'; }).join('') + '</ul>';
+  });
+
+  var seg = 15 * 60, tmr = null, corriendo = false, clock = $('clock'), btnClock = $('btnClock');
+  function pintarReloj() { var m = Math.floor(seg / 60), s = seg % 60; clock.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; clock.classList.toggle('end', seg === 0); }
+  function detener() { if (tmr) clearInterval(tmr); tmr = null; corriendo = false; btnClock.textContent = 'Iniciar'; }
+  btnClock.addEventListener('click', function () {
+    if (corriendo) { detener(); return; }
+    if (seg === 0) return;
+    corriendo = true; btnClock.textContent = 'Pausar';
+    tmr = setInterval(function () { seg--; pintarReloj(); if (seg <= 0) { seg = 0; pintarReloj(); detener(); } }, 1000);
+  });
+  $('btnClockReset').addEventListener('click', function () { detener(); seg = (parseInt(clock.getAttribute('data-min'), 10) || 15) * 60; pintarReloj(); });
+  document.querySelectorAll('[data-min]').forEach(function (b) {
+    if (b.id) return;
+    b.addEventListener('click', function () { detener(); var m = parseInt(b.getAttribute('data-min'), 10); clock.setAttribute('data-min', m); seg = m * 60; pintarReloj(); });
+  });
+  clock.setAttribute('data-min', 15); pintarReloj();
+
+  /* ═══ Constructor del esqueleto ══════════════════════════════ */
+  var SEC = [
+    ['Objetivo del equipo y del proyecto', ['¿Qué producto entregaremos y para cuándo?', '¿Quién es nuestro público?']],
+    ['Roles y responsabilidades', ['¿Quién coordina, quién documenta y quién se comunica con el asesor?', '¿Qué hacemos si alguien no puede cumplir una tarea?']],
+    ['Herramientas y estructura de carpetas', ['¿Qué herramientas de Google usaremos y para qué?', '¿Cómo se llaman y se organizan los archivos?']],
+    ['Reglas de comunicación', ['¿Qué canal usamos para avisos urgentes y cuál para temas formales?', '¿En cuánto tiempo respondemos?']],
+    ['Flujo de trabajo de los documentos', ['¿Cómo se redacta, revisa y aprueba un documento?', '¿Quién asigna los permisos y cuáles?']],
+    ['Reuniones', ['¿Con qué frecuencia nos reunimos y en qué plataforma?', '¿Quién prepara la agenda y quién toma la minuta?']],
+    ['Manejo de desacuerdos', ['¿Cómo expresamos una crítica de manera respetuosa?', '¿Cómo tomamos decisiones cuando no hay consenso?']],
+    ['Seguridad y respaldo', ['¿Quién puede ver o editar cada archivo?', '¿Cómo protegemos las cuentas y dónde guardamos las copias?']]
+  ];
+  var secList = $('secList'), skel = $('skeleton');
+  function armar() {
+    var checks = secList.querySelectorAll('input'), out = 'MANUAL DE PROCEDIMIENTOS PARA LA COLABORACIÓN EN LÍNEA\nEquipo: ____________________\nIntegrantes: ____________________\n', n = 0;
+    SEC.forEach(function (s, i) {
+      if (checks[i].checked) {
+        n++; out += '\n' + n + '. ' + s[0].toUpperCase() + '\n' + s[1].map(function (q) { return '   - ' + q; }).join('\n') + '\n   Acuerdo del equipo: ____________________\n';
+      }
+    });
+    if (n === 0) out += '\n(Selecciona al menos una sección.)';
+    skel.textContent = out;
+  }
+  SEC.forEach(function (s) {
+    var li = el('li', ''), lab = el('label', 'done'), inp = el('input'); inp.type = 'checkbox'; inp.checked = true;
+    lab.appendChild(inp); lab.appendChild(el('span', 'box', 'OK')); lab.appendChild(el('span', '', s[0]));
+    li.appendChild(lab); secList.appendChild(li);
+    inp.addEventListener('change', function () { lab.classList.toggle('done', inp.checked); armar(); });
+  });
+  armar();
+  $('btnCopy').addEventListener('click', function () {
+    var txt = skel.textContent, msg = $('copyMsg');
+    function ok() { msg.textContent = 'Esqueleto copiado. Pégalo en tu documento de Google Docs.'; }
+    function respaldo() {
+      var r = document.createRange(); r.selectNodeContents(skel); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      try { document.execCommand('copy'); ok(); } catch (e) { msg.textContent = 'Selecciona el texto y cópialo manualmente.'; }
+      sel.removeAllRanges();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(ok, respaldo); } else { respaldo(); }
+  });
+
+  /* ═══ Autoevaluación final ═══════════════════════════════════ */
+  crearQuiz('quizFinal', [
+    { t: 'Necesitas recopilar las respuestas de 80 estudiantes en una encuesta y que se concentren automáticamente en una hoja. ¿Qué herramienta es la más adecuada?', o: ['Google Forms', 'Google Slides', 'Google Meet', 'Gmail'], c: 0, w: 'Forms recopila respuestas y las concentra en una hoja de cálculo.' },
+    { t: '¿Qué ventaja distingue a Google Docs frente a un archivo de Word enviado por correo a cada integrante?', o: ['Tiene más tipos de letra', 'Todos trabajan sobre la misma copia, con historial de versiones', 'No necesita conexión a internet', 'Evita tener que usar permisos'], c: 1, w: 'La coedición sobre una sola copia evita versiones duplicadas y permite revisar el historial.' },
+    { t: 'Antes de compartir una carpeta de Drive con información del proyecto, ¿qué práctica corresponde?', o: ['Abrirla a "cualquier persona con el enlace" para ahorrar tiempo', 'Compartirla con personas específicas y con el permiso mínimo necesario', 'Dar permiso de editor a todos por si acaso', 'Enviar la contraseña de tu cuenta al equipo'], c: 1, w: 'El permiso mínimo necesario protege la información, como se vio en la unidad de seguridad.' },
+    { t: 'Un mensaje que cada integrante responde cuando puede, sin coincidir en horario, es un ejemplo de comunicación…', o: ['Sincrónica', 'Asincrónica', 'En tiempo real', 'Presencial'], c: 1, w: 'La comunicación asincrónica no exige coincidir en el tiempo.' },
+    { t: '¿Qué elementos no deben faltar en un manual de procedimientos para el trabajo en equipo virtual?', o: ['Solo la lista de integrantes', 'Roles, canales y tiempos de respuesta, flujo de trabajo y reglas de seguridad', 'Únicamente el calendario de entregas', 'Una lista de redes sociales favoritas'], c: 1, w: 'Un manual útil define quién hace qué, cómo se comunican, cómo trabajan los documentos y cómo protegen la información.' }
+  ], { una: true, numerar: true });
+})();
+</script>
+
+</body>
+</html>
